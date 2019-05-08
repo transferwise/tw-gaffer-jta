@@ -1,10 +1,10 @@
-#Gaffer 1 phase commit JTA.
+# Gaffer 1 phase commit JTA.
 
 Meant to replace default Spring Transaction Manager mainly for performance reasons. But also allows to write pool-of-1-compatible
 code and reduces the probability of half done 1PC scenarios.
 
 
-##Configuration in Spring
+## Configuration in Spring
 Typical usage:
 
 Transaction Manager configuration:
@@ -35,7 +35,7 @@ public class TransactionManagerConfiguration {
 }
 ```
 
-DataSource configuration:
+## DataSource configuration:
 ```java
     @Bean
 	@Override
@@ -50,7 +50,7 @@ DataSource configuration:
 	}
 ```
 
-Hibernate/JPA configuration:
+## Hibernate/JPA configuration:
 ```java
 vendorProperties.put("hibernate.transaction.jta.platform", new SpringJtaPlatform(jtaTransactionManager));
 ```
