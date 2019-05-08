@@ -1,0 +1,115 @@
+plugins {
+    id 'net.researchgate.release' version '2.6.0'
+    id 'java-library'
+    id 'maven-publish'
+    id 'com.github.spotbugs' version '1.7.1'
+}
+
+group = 'com.transferwise.common.gaffer'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": "Gaffer",
+                "Implementation-Version": version
+        )
+    }
+}
+
+compileJava {
+    options.encoding = 'utf-8'
+    options.compilerArgs << '-parameters'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    api 'javax.transaction:javax.transaction-api:1.2'
+    api 'javax.jms:jms-api:1.1-rev-1'
+
+    implementation 'org.slf4j:slf4j-api:1.7.26'
+    implementation 'javax.annotation:jsr250-api:1.0'
+    implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'com.github.spotbugs:spotbugs-annotations:3.1.12'
+
+    testImplementation 'org.springframework:spring-tx:4.2.3.RELEASE'
+    testImplementation 'org.springframework:spring-test:4.2.3.RELEASE'
+    testImplementation 'org.springframework:spring-jdbc:4.2.3.RELEASE'
+    testImplementation 'org.springframework:spring-context:4.2.3.RELEASE'
+    testImplementation 'org.springframework:spring-jms:4.2.3.RELEASE'
+    testImplementation 'org.springframework:spring-orm:4.2.3.RELEASE'
+    testImplementation 'org.hibernate:hibernate-core:4.3.11.Final'
+    testImplementation 'com.google.guava:guava:27.1-jre'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.hamcrest:hamcrest-core:1.3'
+    testImplementation 'org.hsqldb:hsqldb:2.3.0'
+    testImplementation 'org.apache.tomcat:tomcat-jdbc:9.0.19'
+    testImplementation 'org.apache.activemq:activemq-pool:5.7.0'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.3'
+    testImplementation 'org.apache.xbean:xbean-spring:3.14'
+}
+
+apply plugin: 'net.researchgate.release'
+
+release {
+    tagTemplate = '$name-$version'
+}
+
+ext.artifactoryUser = project.hasProperty("artifactoryUser") ? project.artifactoryUser : System.env.ARTIFACTORY_USER as String
+ext.artifactoryPassword = project.hasProperty("artifactoryPassword") ? project.artifactoryPassword : System.env.ARTIFACTORY_PASSWORD as String
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+
+            pom {
+                name = 'Gaffer'
+                description = 'Gaffer - efficient 1PC JTA for enterprise services'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0, Copyright 2019 TransferWise Ltd'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'onukristo'
+                        name = 'Kristo Kuusküll'
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url "https://arti.tw.ee/artifactory/libs-${project.version.endsWith('-SNAPSHOT') ? 'snapshot' : 'release'}-local"
+            credentials {
+                username = artifactoryUser
+                password = artifactoryPassword
+            }
+        }
+    }
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed", "standardError"
+        showStackTraces = true
+        exceptionFormat = 'full'
+    }
+}
+
