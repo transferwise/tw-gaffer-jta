@@ -5,7 +5,7 @@ plugins {
     id 'com.github.spotbugs' version '1.7.1'
 }
 
-group = 'com.transferwise.common.gaffer'
+group = 'com.transferwise.common'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -55,10 +55,9 @@ dependencies {
     testImplementation 'org.apache.xbean:xbean-spring:3.14'
 }
 
-apply plugin: 'net.researchgate.release'
-
 release {
     tagTemplate = '$name-$version'
+    failOnUnversionedFiles = true
 }
 
 afterReleaseBuild.dependsOn publish
