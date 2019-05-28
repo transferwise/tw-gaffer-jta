@@ -79,7 +79,7 @@ public class TransactionImpl implements Transaction {
         }
         if (isDoneOrFinishing()) {
             exceptionThrower.throwException(new IllegalStateException("Can not commit '" + getTransactionInfo() + "' with status '" + status
-                    + "''. Transaction is finishing or finished."));
+                + "''. Transaction is finishing or finished."));
         }
 
         try {
@@ -177,15 +177,15 @@ public class TransactionImpl implements Transaction {
         }
         if (status == Status.STATUS_MARKED_ROLLBACK) {
             exceptionThrower.throwException(new IllegalStateException("Can not enlist resource. Transaction '" + getTransactionInfo()
-                    + "' has been marked to roll back."));
+                + "' has been marked to roll back."));
         }
         if (isDoneOrFinishing()) {
             exceptionThrower
-                    .throwException(new IllegalStateException("Can not enlist resource. Transaction '" + getTransactionInfo() + "' is finished or finishing."));
+                .throwException(new IllegalStateException("Can not enlist resource. Transaction '" + getTransactionInfo() + "' is finished or finishing."));
         }
         if (!(xaRes instanceof DummyXAResource)) {
             exceptionThrower.throwException(new IllegalStateException("Full XA is not supported yet for transaction '" + getTransactionInfo() + "', only "
-                    + DummyXAResource.class + " can participate."));
+                + DummyXAResource.class + " can participate."));
         }
         xaResources.add(xaRes);
         return true;

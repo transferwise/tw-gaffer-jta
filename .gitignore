@@ -4,11 +4,7 @@
 /activemq-data
 /.gradle
 
-## Idea
 /.idea
-*.iml
-*.ipr
-*.iws
 
 ## Gradle
 /caches

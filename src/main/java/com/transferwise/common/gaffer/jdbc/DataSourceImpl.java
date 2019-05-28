@@ -43,7 +43,7 @@ public class DataSourceImpl extends DataSourceWrapper implements DataSourceMXBea
         if (StringUtils.isEmpty(uniqueName)) {
             throw new IllegalStateException("Unique name is not set.");
         }
-        id = DataSourceImpl.class + "." + String.valueOf(idSequence.incrementAndGet());
+        id = DataSourceImpl.class + "." + idSequence.incrementAndGet();
         connectionResourceKey = id + ".con";
 
         if (registerAsMBean) {
@@ -111,7 +111,7 @@ public class DataSourceImpl extends DataSourceWrapper implements DataSourceMXBea
     }
 
     private Connection getTransactionalConnection(ServiceRegistry serviceRegistry, TransactionSynchronizationRegistry registry, String username, String password)
-            throws SQLException {
+        throws SQLException {
         TransactionalConnectionImpl con = (TransactionalConnectionImpl) registry.getResource(connectionResourceKey);
         if (con == null) {
             con = new TransactionalConnectionImpl(this, getConnectionFromDataSource(username, password), uniqueName);
@@ -125,14 +125,10 @@ public class DataSourceImpl extends DataSourceWrapper implements DataSourceMXBea
     }
 
     private Connection getConnectionFromDataSource(String username, String password) throws SQLException {
-        try {
-            if (username == null) {
-                return getDataSource().getConnection();
-            }
-            return getDataSource().getConnection(username, password);
-        } catch (SQLException e) {
-            throw e;
+        if (username == null) {
+            return getDataSource().getConnection();
         }
+        return getDataSource().getConnection(username, password);
     }
 
     private void setAutoCommit(Connection con, boolean autoCommit) throws SQLException {

@@ -13,8 +13,8 @@ targetCompatibility = '1.8'
 jar {
     manifest {
         attributes(
-                "Implementation-Title": "Gaffer 1PC JTA",
-                "Implementation-Version": version
+            "Implementation-Title": "Gaffer 1PC JTA",
+            "Implementation-Version": version
         )
     }
 }
@@ -30,13 +30,14 @@ repositories {
 }
 
 dependencies {
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.12'
+
     api 'javax.transaction:javax.transaction-api:1.2'
     api 'javax.jms:jms-api:1.1-rev-1'
 
     implementation 'org.slf4j:slf4j-api:1.7.26'
     implementation 'javax.annotation:jsr250-api:1.0'
     implementation 'org.apache.commons:commons-lang3:3.9'
-    implementation 'com.github.spotbugs:spotbugs-annotations:3.1.12'
 
     testImplementation 'org.springframework:spring-tx:4.2.3.RELEASE'
     testImplementation 'org.springframework:spring-test:4.2.3.RELEASE'

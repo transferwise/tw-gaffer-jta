@@ -3,6 +3,7 @@ package com.transferwise.common.gaffer;
 import com.transferwise.common.gaffer.util.Uid;
 
 import javax.transaction.xa.Xid;
+import java.nio.charset.StandardCharsets;
 
 public class GafferXid implements Xid {
     private static final int FORMAT_ID = 0x47666672;
@@ -31,10 +32,10 @@ public class GafferXid implements Xid {
     }
 
     public static void main(String... args) throws Exception {
-        byte[] bytes = "Gffr".getBytes("UTF-8");
+        byte[] bytes = "Gffr".getBytes(StandardCharsets.UTF_8);
         StringBuilder sb = new StringBuilder("FORMAT_ID = 0x");
         for (int i = 0; i < 4; i++) {
-            sb.append(String.valueOf(bytes[i] / 16)).append(String.valueOf(bytes[i] % 16));
+            sb.append(bytes[i] / 16).append(bytes[i] % 16);
         }
         System.out.println(sb);
     }

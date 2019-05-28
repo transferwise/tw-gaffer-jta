@@ -4,19 +4,19 @@ import javax.management.MXBean;
 
 @MXBean
 public interface TransactionManagerStatisticsMXBean {
-    public long getStartedTransactionsCount();
+    long getStartedTransactionsCount();
 
-    public long getCommittedTransactionsCount();
+    long getCommittedTransactionsCount();
 
-    public long getRolledBackTransactionsCount();
+    long getRolledBackTransactionsCount();
 
-    public long getActiveTransactionsCount();
+    long getActiveTransactionsCount();
 
-    public long getSuspendedTransactionsCount();
+    long getSuspendedTransactionsCount();
 
-    public long getAbandonedTransactionsCount();
+    long getAbandonedTransactionsCount();
 
-    public long getFailedRollbacksCount();
+    long getFailedRollbacksCount();
 
-    public long getHeuristicCommitsCount();
+    long getHeuristicCommitsCount();
 }

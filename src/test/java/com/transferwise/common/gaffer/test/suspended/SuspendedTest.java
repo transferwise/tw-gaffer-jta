@@ -62,7 +62,7 @@ public class SuspendedTest {
         } catch (UnexpectedRollbackException e) {
             wasRollback = true;
         }
-        Assert.assertEquals(true, wasRollback);
+        Assert.assertTrue(wasRollback);
         Assert.assertEquals(0, databasesManager.getTableRowsCount("clients.clients"));
         Assert.assertEquals(1, databasesManager.getTableRowsCount("logs.logs"));
     }

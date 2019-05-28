@@ -10,30 +10,30 @@ public class DummyXAResource implements XAResource {
     }
 
     @Override
-    public void end(Xid xid, int flags) throws XAException {
+    public void end(Xid xid, int flags) {
     }
 
     @Override
-    public void forget(Xid xid) throws XAException {
+    public void forget(Xid xid) {
     }
 
     @Override
-    public int getTransactionTimeout() throws XAException {
+    public int getTransactionTimeout() {
         return 0;
     }
 
     @Override
-    public boolean isSameRM(XAResource xares) throws XAException {
+    public boolean isSameRM(XAResource xares) {
         return false;
     }
 
     @Override
-    public int prepare(Xid xid) throws XAException {
+    public int prepare(Xid xid) {
         return 0;
     }
 
     @Override
-    public Xid[] recover(int flag) throws XAException {
+    public Xid[] recover(int flag) {
         return null;
     }
 
@@ -42,12 +42,12 @@ public class DummyXAResource implements XAResource {
     }
 
     @Override
-    public boolean setTransactionTimeout(int seconds) throws XAException {
+    public boolean setTransactionTimeout(int seconds) {
         return false;
     }
 
     @Override
-    public void start(Xid xid, int flags) throws XAException {
+    public void start(Xid xid, int flags) {
     }
 
 }

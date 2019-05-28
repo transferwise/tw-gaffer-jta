@@ -4,11 +4,11 @@ import javax.management.MXBean;
 
 @MXBean
 public interface DataSourceMXBean {
-    public long getAllConnectionGetsCount();
+    long getAllConnectionGetsCount();
 
-    public long getBufferedConnectionGetsCount();
+    long getBufferedConnectionGetsCount();
 
-    public long getNonTransactionalConnectionGetsCount();
+    long getNonTransactionalConnectionGetsCount();
 
-    public long getAutoCommitSwitchingCount();
+    long getAutoCommitSwitchingCount();
 }

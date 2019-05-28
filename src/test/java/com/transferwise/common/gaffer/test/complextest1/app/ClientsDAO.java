@@ -48,13 +48,14 @@ public class ClientsDAO {
     @Transactional
     public void createAccount(int id, int clientId, String referenceNumber) {
         try (Connection con = DataSourceUtils.getConnection(accountsDataSource);
-             PreparedStatement stmt = con.prepareStatement("insert into accounts (id, clientId, referenceNumber) values(?,?,?)");) {
+             PreparedStatement stmt = con.prepareStatement("insert into accounts (id, clientId, referenceNumber) values(?,?,?)")) {
             stmt.setInt(1, id);
             stmt.setInt(2, clientId);
             stmt.setString(3, referenceNumber);
             stmt.execute();
         } catch (Exception e) {
-            Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
 }

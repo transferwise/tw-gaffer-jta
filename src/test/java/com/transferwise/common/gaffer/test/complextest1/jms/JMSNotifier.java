@@ -3,12 +3,12 @@ package com.transferwise.common.gaffer.test.complextest1.jms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.jms.*;
+import javax.jms.ConnectionFactory;
+import javax.jms.Queue;
 
 @Component("jmsNotifier")
 public class JMSNotifier {
@@ -25,12 +25,7 @@ public class JMSNotifier {
 
     @Transactional
     public void notifyClientCreation() {
-        this.jmsTemplate.send(queue, new MessageCreator() {
-            @Override
-            public Message createMessage(Session session) throws JMSException {
-                return session.createTextMessage("Client added.");
-            }
-        });
+        this.jmsTemplate.send(queue, session -> session.createTextMessage("Client added."));
         log.info("Sent notification message.");
     }
 }

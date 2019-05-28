@@ -23,7 +23,7 @@ public class TransactionManagerImpl implements TransactionManager {
     }
 
     @Override
-    public void begin() throws NotSupportedException, SystemException {
+    public void begin() throws NotSupportedException {
         Transaction transaction = getTransaction();
         if (transaction != null) {
             exceptionThrower.throwException(new NotSupportedException("Nested transactions are not supported."));
@@ -37,7 +37,7 @@ public class TransactionManagerImpl implements TransactionManager {
     }
 
     @Override
-    public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException {
+    public void commit() throws RollbackException, SecurityException, IllegalStateException {
         TransactionImpl transaction = getTransactionImpl();
         if (transaction == null) {
             exceptionThrower.throwException(new IllegalStateException("Can not commit. Current thread is not associated with transaction."));
@@ -58,8 +58,7 @@ public class TransactionManagerImpl implements TransactionManager {
 
     @Override
     public Transaction getTransaction() {
-        TransactionImpl transaction = transactions.get();
-        return transaction;
+        return transactions.get();
     }
 
     public TransactionImpl getTransactionImpl() {
@@ -67,7 +66,7 @@ public class TransactionManagerImpl implements TransactionManager {
     }
 
     @Override
-    public void resume(Transaction transaction) throws InvalidTransactionException, IllegalStateException, SystemException {
+    public void resume(Transaction transaction) throws IllegalStateException {
         Transaction currentTransaction = getTransaction();
         if (currentTransaction != null) {
             throw new IllegalStateException("Can not resume. Current thread is already associated with transaction.");
@@ -86,7 +85,7 @@ public class TransactionManagerImpl implements TransactionManager {
     }
 
     @Override
-    public void rollback() throws IllegalStateException, SecurityException, SystemException {
+    public void rollback() throws IllegalStateException, SecurityException {
         TransactionImpl transaction = getTransactionImpl();
         if (transaction == null) {
             exceptionThrower.throwException(new IllegalStateException("Can not rollback. Current thread is not associated with transaction."));
@@ -110,12 +109,12 @@ public class TransactionManagerImpl implements TransactionManager {
     }
 
     @Override
-    public void setTransactionTimeout(int seconds) throws SystemException {
+    public void setTransactionTimeout(int seconds) {
         transactionTimeoutsSeconds.set(seconds);
     }
 
     @Override
-    public Transaction suspend() throws SystemException {
+    public Transaction suspend() {
         TransactionImpl transaction = getTransactionImpl();
 
         if (transaction != null) {

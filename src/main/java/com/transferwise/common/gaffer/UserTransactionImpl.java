@@ -33,7 +33,7 @@ public class UserTransactionImpl implements UserTransaction, Serializable {
     }
 
     @Override
-    public int getStatus() throws SystemException {
+    public int getStatus() {
         return getTransactionManager().getStatus();
     }
 

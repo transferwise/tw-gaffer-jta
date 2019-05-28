@@ -34,7 +34,7 @@ public class UsersDAO {
     @Transactional
     public void createPassword(int id, int userId, String password) {
         try (Connection con = DataSourceUtils.getConnection(secretsDataSource);
-             PreparedStatement stmt = con.prepareStatement("insert into passwords (id, userId, password) values(?,?,?)");) {
+             PreparedStatement stmt = con.prepareStatement("insert into passwords (id, userId, password) values(?,?,?)")) {
             stmt.setInt(1, id);
             stmt.setInt(2, userId);
             stmt.setString(3, password);
@@ -44,7 +44,8 @@ public class UsersDAO {
                 throw new RuntimeException("Creating a password failed.");
             }
         } catch (Exception e) {
-            Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
 }

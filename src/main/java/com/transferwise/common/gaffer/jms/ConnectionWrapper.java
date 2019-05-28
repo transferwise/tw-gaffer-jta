@@ -52,7 +52,7 @@ public class ConnectionWrapper implements Connection {
 
     @Override
     public ConnectionConsumer createConnectionConsumer(Destination destination, String messageSelector, ServerSessionPool sessionPool, int maxMessages)
-            throws JMSException {
+        throws JMSException {
         return connection.createConnectionConsumer(destination, messageSelector, sessionPool, maxMessages);
     }
 

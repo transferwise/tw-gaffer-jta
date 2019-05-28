@@ -41,7 +41,7 @@ public class ConnectionFactoryImpl implements ConnectionFactory, ConnectionFacto
         if (StringUtils.isEmpty(uniqueName)) {
             throw new IllegalStateException("Unique name is not set.");
         }
-        id = ConnectionFactoryImpl.class.getName() + "." + String.valueOf(idSequence.incrementAndGet());
+        id = ConnectionFactoryImpl.class.getName() + "." + idSequence.incrementAndGet();
         sessionResourceKey = id + ".ses";
 
         if (registerAsMBean) {
@@ -143,12 +143,7 @@ public class ConnectionFactoryImpl implements ConnectionFactory, ConnectionFacto
         }
 
         @Override
-        public void commit() throws JMSException {
-            super.commit();
-        }
-
-        @Override
-        public void close() throws JMSException {
+        public void close() {
         }
 
         public void closeSession() throws JMSException {

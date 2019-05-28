@@ -42,7 +42,7 @@ public class ComplexTest {
     public void setUp() {
         if (setUpJms) {
             appCtxt = new ClassPathXmlApplicationContext("/com/transferwise/common/gaffer/test/complextest1/app/applicationContext.xml",
-                    "/com/transferwise/common/gaffer/test/complextest1/app/jms.xml");
+                "/com/transferwise/common/gaffer/test/complextest1/app/jms.xml");
         } else {
             appCtxt = new ClassPathXmlApplicationContext("/com/transferwise/common/gaffer/test/complextest1/app/applicationContext.xml");
         }
@@ -132,12 +132,7 @@ public class ComplexTest {
         ExecutorService executor = Executors.newFixedThreadPool(THREADS_COUNT);
 
         for (int i = 0; i < N; i++) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    getClientsService().createClient(CLIENT_NAME);
-                }
-            });
+            executor.execute(() -> getClientsService().createClient(CLIENT_NAME));
         }
         executor.shutdown();
         try {
@@ -226,7 +221,7 @@ public class ComplexTest {
 
         try {
             Thread.sleep(5000);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
 
         log.info("Done.");

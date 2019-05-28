@@ -43,8 +43,8 @@ public class DatabasesManager {
 
     private void dropDatabases(DataSource dataSource) {
         try {
-            try (Connection con = dataSource.getConnection();) {
-                try (PreparedStatement stmt = con.prepareStatement("SHUTDOWN");) {
+            try (Connection con = dataSource.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement("SHUTDOWN")) {
                     stmt.execute();
                 }
             }
@@ -55,11 +55,11 @@ public class DatabasesManager {
 
     private void createDatabase(DataSource dataSource, String sql) {
         try {
-            try (Connection con = dataSource.getConnection();) {
-                try (PreparedStatement stmt = con.prepareStatement(sql);) {
+            try (Connection con = dataSource.getConnection()) {
+                try (PreparedStatement stmt = con.prepareStatement(sql)) {
                     stmt.execute();
                 }
-                try (PreparedStatement stmt = con.prepareStatement("create table DUAL (id INT NOT NULL)");) {
+                try (PreparedStatement stmt = con.prepareStatement("create table DUAL (id INT NOT NULL)")) {
                     stmt.execute();
                 }
             }
@@ -92,7 +92,7 @@ public class DatabasesManager {
     private int getTableRowsCount(DataSource dataSource, String tableName) {
         try (Connection con = dataSource.getConnection();
              PreparedStatement stmt = con.prepareStatement("select count(*) from " + tableName);
-             ResultSet rs = stmt.executeQuery();) {
+             ResultSet rs = stmt.executeQuery()) {
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
