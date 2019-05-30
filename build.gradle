@@ -1,37 +1,16 @@
 plugins {
-    id "net.researchgate.release" version "2.8.0"
-    id 'java-library'
-    id 'maven-publish'
-    id 'com.github.spotbugs' version '1.7.1'
+    id "net.researchgate.release" version "2.8.0" apply false
+    id 'com.github.spotbugs' version '1.7.1' apply false
 }
 
-group = 'com.transferwise.common'
+ext.projectName = 'TransferWise Gaffer 1PC JTA'
+ext.projectDescription = 'Transferwise Gaffer 1PC JTA - efficient 1PC JTA for enterprise services'
+ext.projectGitHubRepoName = 'tw-gaffer-jta'
+ext.projectArtifactName = 'tw-gaffer-jta'
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-jar {
-    manifest {
-        attributes(
-            "Implementation-Title": "Gaffer 1PC JTA",
-            "Implementation-Version": version
-        )
-    }
-}
-
-compileJava {
-    options.encoding = 'utf-8'
-    options.compilerArgs << '-parameters'
-}
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
+apply from: 'build-common.gradle'
 
 dependencies {
-    compileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.12'
-
     api 'javax.transaction:javax.transaction-api:1.2'
     api 'javax.jms:jms-api:1.1-rev-1'
 
@@ -55,63 +34,3 @@ dependencies {
     testImplementation 'ch.qos.logback:logback-classic:1.2.3'
     testImplementation 'org.apache.xbean:xbean-spring:3.14'
 }
-
-release {
-    tagTemplate = '$name-$version'
-    failOnUnversionedFiles = true
-}
-
-afterReleaseBuild.dependsOn publish
-
-ext.artifactoryUser = project.hasProperty("artifactoryUser") ? project.artifactoryUser : System.env.ARTIFACTORY_USER as String
-ext.artifactoryPassword = project.hasProperty("artifactoryPassword") ? project.artifactoryPassword : System.env.ARTIFACTORY_PASSWORD as String
-
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    archiveClassifier = 'sources'
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-
-            pom {
-                name = 'TW Gaffer JTA'
-                description = 'Transferwise Gaffer JTA - efficient 1PC JTA for enterprise services'
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0, Copyright 2019 TransferWise Ltd'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'onukristo'
-                        name = 'Kristo Kuusküll'
-                    }
-                }
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            url "https://arti.tw.ee/artifactory/libs-${project.version.endsWith('-SNAPSHOT') ? 'snapshot' : 'release'}-local"
-            credentials {
-                username = artifactoryUser
-                password = artifactoryPassword
-            }
-        }
-    }
-}
-
-test {
-    testLogging {
-        events "passed", "skipped", "failed", "standardError"
-        showStackTraces = true
-        exceptionFormat = 'full'
-    }
-}
-
