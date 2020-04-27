@@ -33,6 +33,12 @@ public class DataSourceWrapper implements DataSource {
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
+        if (iface == null) {
+            return null;
+        }
+        if (iface.isInstance(this)) {
+            return (T) this;
+        }
         return dataSource.unwrap(iface);
     }
 
@@ -43,7 +49,10 @@ public class DataSourceWrapper implements DataSource {
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return dataSource.isWrapperFor(iface);
+        if (iface == null) {
+            return false;
+        }
+        return iface.isInstance(this) || dataSource.isWrapperFor(iface);
     }
 
     @Override

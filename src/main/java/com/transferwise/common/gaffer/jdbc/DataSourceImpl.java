@@ -32,6 +32,7 @@ public class DataSourceImpl extends DataSourceWrapper implements DataSourceMXBea
     private int validationTimeoutSeconds = 0;
     private AutoCommitStrategy beforeReleaseAutoCommitStrategy = AutoCommitStrategy.NONE;
     private int order = 0;
+    private volatile boolean initialized;
 
     private final AtomicLong allConnectionGetsCount = new AtomicLong();
     private final AtomicLong bufferedConnectionGetsCount = new AtomicLong();
@@ -40,14 +41,22 @@ public class DataSourceImpl extends DataSourceWrapper implements DataSourceMXBea
 
     @PostConstruct
     public void init() {
-        if (StringUtils.isEmpty(uniqueName)) {
-            throw new IllegalStateException("Unique name is not set.");
-        }
-        id = DataSourceImpl.class + "." + idSequence.incrementAndGet();
-        connectionResourceKey = id + ".con";
+        if (!initialized) {
+            synchronized (this) {
+                if (!initialized){
+                    if (StringUtils.isEmpty(uniqueName)) {
+                        throw new IllegalStateException("Unique name is not set.");
+                    }
+                    id = DataSourceImpl.class + "." + idSequence.incrementAndGet();
+                    connectionResourceKey = id + ".con";
 
-        if (registerAsMBean) {
-            MBeanUtil.registerMBeanQuietly(this, "com.transferwise.common.gaffer:type=JdbcDataSource,name=" + uniqueName);
+                    if (registerAsMBean) {
+                        MBeanUtil.registerMBeanQuietly(this,
+                                                       "com.transferwise.common.gaffer:type=JdbcDataSource,name=" + uniqueName);
+                    }
+                    initialized = true;
+                }
+            }
         }
     }
 
@@ -95,12 +104,16 @@ public class DataSourceImpl extends DataSourceWrapper implements DataSourceMXBea
 
     private Connection getNonTransactionalConnection(String username, String password) throws SQLException {
         log.debug("Connection requested outside of transaction.");
-        NonTransactionalConnectionImpl con = new NonTransactionalConnectionImpl(this, getConnectionFromDataSource(username, password));
+        NonTransactionalConnectionImpl con = new NonTransactionalConnectionImpl(this,
+                                                                                getConnectionFromDataSource(username,
+                                                                                                            password));
         nonTransactionalConnectionGetsCount.incrementAndGet();
         return con;
     }
 
     private Connection getConnection0(String username, String password) throws SQLException {
+        init();
+
         ServiceRegistry serviceRegistry = ServiceRegistryHolder.getServiceRegistry();
         TransactionSynchronizationRegistry registry = serviceRegistry.getTransactionSynchronizationRegistry();
         allConnectionGetsCount.incrementAndGet();

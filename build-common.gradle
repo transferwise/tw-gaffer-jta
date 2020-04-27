@@ -1,7 +1,5 @@
 apply plugin: 'java-library'
-apply plugin: 'net.researchgate.release'
 apply plugin: 'maven-publish'
-apply plugin: 'groovy'
 apply plugin: 'signing'
 apply plugin: 'com.github.spotbugs'
 
@@ -20,12 +18,12 @@ jar {
 }
 
 dependencies {
-    annotationProcessor 'org.projectlombok:lombok:1.18.6'
-    compileOnly 'org.projectlombok:lombok:1.18.6'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    compileOnly 'org.projectlombok:lombok:1.18.12'
     compileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.12'
 
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.6'
-    testCompileOnly 'org.projectlombok:lombok:1.18.6'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
     testCompileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.12'
 }
 
@@ -38,13 +36,6 @@ repositories {
     mavenCentral()
     mavenLocal()
 }
-
-release {
-    tagTemplate = '$name-$version'
-    failOnUnversionedFiles = true
-}
-
-afterReleaseBuild.dependsOn publish
 
 ext.artifactoryUser = project.hasProperty("artifactoryUser") ? project.artifactoryUser : System.env.ARTIFACTORY_USER as String
 ext.artifactoryPassword = project.hasProperty("artifactoryPassword") ? project.artifactoryPassword : System.env.ARTIFACTORY_PASSWORD as String
@@ -115,21 +106,20 @@ publishing {
     }
 
     repositories {
-        /*
         maven {
             url "https://arti.tw.ee/artifactory/libs-${project.version.endsWith('-SNAPSHOT') ? 'snapshot' : 'release'}-local"
             credentials {
                 username = artifactoryUser
                 password = artifactoryPassword
             }
-        }*/
-        maven {
+        }
+        /*maven {
             url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
             credentials {
                 username sonatypeUsername
                 password sonatypePassword
             }
-        }
+        }*/
     }
 }
 
@@ -145,3 +135,13 @@ spotbugs {
     sourceSets = [sourceSets.main]
     effort = "max"
 }
+
+task addTag(type: Exec) {
+    commandLine 'git', 'tag', "$project.name-$project.version", '-m', "$project.name-$project.version"
+}
+task pushTag(type: Exec) {
+    commandLine 'git', 'push', 'origin', "$project.name-$project.version"
+}
+
+pushTag.dependsOn addTag
+pushTag.mustRunAfter publish
