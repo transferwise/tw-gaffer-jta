@@ -7,7 +7,6 @@
 Meant to replace default Spring Transaction Manager mainly for performance reasons. But also allows to write pool-of-1-compatible
 code and reduces the probability of half done 1PC scenarios.
 
-
 ## Configuration in Spring
 Typical usage:
 
