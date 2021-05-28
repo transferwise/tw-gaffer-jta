@@ -1,6 +1,5 @@
 plugins {
-    id "net.researchgate.release" version "2.8.0" apply false
-    id 'com.github.spotbugs' version '1.7.1' apply false
+    id 'com.github.spotbugs' version '4.7.1'
 }
 
 ext.projectName = 'TransferWise Gaffer 1PC JTA'
@@ -14,9 +13,9 @@ dependencies {
     api 'javax.transaction:javax.transaction-api:1.2'
     api 'javax.jms:jms-api:1.1-rev-1'
 
-    implementation 'org.slf4j:slf4j-api:1.7.26'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'javax.annotation:jsr250-api:1.0'
-    implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 
     testImplementation 'org.springframework:spring-tx:4.2.3.RELEASE'
     testImplementation 'org.springframework:spring-test:4.2.3.RELEASE'
@@ -25,7 +24,7 @@ dependencies {
     testImplementation 'org.springframework:spring-jms:4.2.3.RELEASE'
     testImplementation 'org.springframework:spring-orm:4.2.3.RELEASE'
     testImplementation 'org.hibernate:hibernate-core:4.3.11.Final'
-    testImplementation 'com.google.guava:guava:27.1-jre'
+    testImplementation 'com.google.guava:guava:30.1.1-jre'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.hamcrest:hamcrest-core:1.3'
     testImplementation 'org.hsqldb:hsqldb:2.3.0'

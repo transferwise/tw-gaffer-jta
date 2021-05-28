@@ -4,32 +4,33 @@ import org.springframework.stereotype.Component;
 
 @Component("config")
 public class Config {
-    private boolean createPassword = true;
-    private boolean failPasswordCreation;
-    private boolean useHibernate = false;
 
-    public boolean isCreatePassword() {
-        return createPassword;
-    }
+  private boolean createPassword = true;
+  private boolean failPasswordCreation;
+  private boolean useHibernate = false;
 
-    public void setCreatePassword(boolean createPassword) {
-        this.createPassword = createPassword;
-    }
+  public boolean isCreatePassword() {
+    return createPassword;
+  }
 
-    public boolean isFailPasswordCreation() {
-        return failPasswordCreation;
-    }
+  public void setCreatePassword(boolean createPassword) {
+    this.createPassword = createPassword;
+  }
 
-    public void setFailPasswordCreation(boolean failPasswordCreation) {
-        this.failPasswordCreation = failPasswordCreation;
-    }
+  public boolean isFailPasswordCreation() {
+    return failPasswordCreation;
+  }
 
-    public boolean isUseHibernate() {
-        return useHibernate;
-    }
+  public void setFailPasswordCreation(boolean failPasswordCreation) {
+    this.failPasswordCreation = failPasswordCreation;
+  }
 
-    public void setUseHibernate(boolean useHibernate) {
-        this.useHibernate = useHibernate;
-    }
+  public boolean isUseHibernate() {
+    return useHibernate;
+  }
+
+  public void setUseHibernate(boolean useHibernate) {
+    this.useHibernate = useHibernate;
+  }
 
 }

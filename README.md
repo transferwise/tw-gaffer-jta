@@ -1,11 +1,11 @@
 # Gaffer 1 phase commit JTA.
 
 ![Apache 2](https://img.shields.io/hexpm/l/plug.svg)
-![Java 1.8](https://img.shields.io/badge/Java-1.8-blue.svg)
+![Java 11](https://img.shields.io/badge/Java-1.8-blue.svg)
+![Maven Central](https://badgen.net/maven/v/maven-central/com.transferwise.common/tw-gaffer-jta)
 
 Meant to replace default Spring Transaction Manager mainly for performance reasons. But also allows to write pool-of-1-compatible
 code and reduces the probability of half done 1PC scenarios.
-
 
 ## Configuration in Spring
 Typical usage:
@@ -59,14 +59,14 @@ vendorProperties.put("hibernate.transaction.jta.platform", new SpringJtaPlatform
 ```
 
 ## License
-Copyright 2019 TransferWise Ltd.
- 
+Copyright 2021 TransferWise Ltd.
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
- 
+
 http://www.apache.org/licenses/LICENSE-2.0
- 
+
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.

@@ -1,11 +1,12 @@
 package com.transferwise.common.gaffer.util;
 
 public interface Uid {
-    long getStartTimeMillis();
 
-    int getSequence();
+  long getStartTimeMillis();
 
-    String getInstanceId();
+  int getSequence();
 
-    byte[] asBytes();
+  String getInstanceId();
+
+  byte[] asBytes();
 }

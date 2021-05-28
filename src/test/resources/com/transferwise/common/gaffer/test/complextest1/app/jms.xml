@@ -4,7 +4,7 @@
        xmlns:amq="http://activemq.apache.org/schema/core"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-            
+
            http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
     <context:component-scan base-package="com.transferwise.common.gaffer.test.complextest1.jms"/>
@@ -29,7 +29,7 @@
     </bean>
     <bean id="messageListener" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
         <constructor-arg>
-            <bean class="com.transferwise.common.gaffer.test.complextest1.jms.JMSNotificationListener"/>
+            <bean class="com.transferwise.common.gaffer.test.complextest1.jms.JmsNotificationListener"/>
         </constructor-arg>
     </bean>
     <bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
