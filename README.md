@@ -1,7 +1,7 @@
 # Gaffer 1 phase commit JTA.
 
 ![Apache 2](https://img.shields.io/hexpm/l/plug.svg)
-![Java 11](https://img.shields.io/badge/Java-1.8-blue.svg)
+![Java 11](https://img.shields.io/badge/Java-11-blue.svg)
 ![Maven Central](https://badgen.net/maven/v/maven-central/com.transferwise.common/tw-gaffer-jta)
 
 Meant to replace default Spring Transaction Manager mainly for performance reasons. But also allows to write pool-of-1-compatible
