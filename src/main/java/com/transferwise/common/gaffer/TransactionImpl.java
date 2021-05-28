@@ -82,10 +82,10 @@ public class TransactionImpl implements Transaction {
       setTimeoutMillis(timeoutSeconds * 1000);
     }
     this.beforeCommitValidationRequiredTimeMs = beforeCommitValidationRequiredTimeMs;
-    setStatus0(Status.STATUS_ACTIVE);
+    setStatusInternal(Status.STATUS_ACTIVE);
   }
 
-  private void setStatus0(int status) {
+  private void setStatusInternal(int status) {
     this.status = status;
     abandonedTransactionsTracker.status = status;
   }
@@ -286,7 +286,7 @@ public class TransactionImpl implements Transaction {
     if (log.isDebugEnabled()) {
       log.debug("Setting transaction '%s' status to '%s'.", getTransactionInfo(), TransactionStatuses.toString(status));
     }
-    setStatus0(status);
+    setStatusInternal(status);
   }
 
   public Uid getGlobalTransactionId() {
