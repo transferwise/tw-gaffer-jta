@@ -1,37 +1,37 @@
 package com.transferwise.common.gaffer;
 
 public class Configuration {
-    private String instanceId = "Gaffer";
 
-    /**
-     * Sometimes calling API like Spring will not show any exceptions during
-     * rollbacks and commits, so logging those out in gaffer can be neccessary.
-     */
-    private boolean logExceptions = false;
-    private long beforeCommitValidationRequiredTimeMs = -1;
+  private String instanceId = "Gaffer";
 
-    public String getInstanceId() {
-        return instanceId;
-    }
+  /**
+   * Sometimes calling API like Spring will not show any exceptions during rollbacks and commits, so logging those out in gaffer can be neccessary.
+   */
+  private boolean logExceptions = false;
+  private long beforeCommitValidationRequiredTimeMs = -1;
 
-    public void setInstanceId(String instanceId) {
-        this.instanceId = instanceId;
-    }
+  public String getInstanceId() {
+    return instanceId;
+  }
 
-    public boolean isLogExceptions() {
-        return logExceptions;
-    }
+  public void setInstanceId(String instanceId) {
+    this.instanceId = instanceId;
+  }
 
-    public void setLogExceptions(boolean logExceptions) {
-        this.logExceptions = logExceptions;
-    }
+  public boolean isLogExceptions() {
+    return logExceptions;
+  }
 
-    public long getBeforeCommitValidationRequiredTimeMs() {
-        return beforeCommitValidationRequiredTimeMs;
-    }
+  public void setLogExceptions(boolean logExceptions) {
+    this.logExceptions = logExceptions;
+  }
 
-    public void setBeforeCommitValidationRequiredTimeMs(long beforeCommitValidationRequiredTimeMs) {
-        this.beforeCommitValidationRequiredTimeMs = beforeCommitValidationRequiredTimeMs;
-    }
+  public long getBeforeCommitValidationRequiredTimeMs() {
+    return beforeCommitValidationRequiredTimeMs;
+  }
+
+  public void setBeforeCommitValidationRequiredTimeMs(long beforeCommitValidationRequiredTimeMs) {
+    this.beforeCommitValidationRequiredTimeMs = beforeCommitValidationRequiredTimeMs;
+  }
 
 }

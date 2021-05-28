@@ -1,82 +1,82 @@
 package com.transferwise.common.gaffer.jdbc;
 
-import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 public class DataSourceWrapper implements DataSource {
-    private DataSource dataSource;
 
-    public DataSourceWrapper() {
+  private DataSource dataSource;
 
+  public DataSourceWrapper() {
+  }
+
+  public DataSourceWrapper(DataSource dataSource) {
+    this.dataSource = dataSource;
+  }
+
+  public DataSource getDataSource() {
+    return dataSource;
+  }
+
+  public void setDataSource(DataSource dataSource) {
+    this.dataSource = dataSource;
+  }
+
+  @Override
+  public PrintWriter getLogWriter() throws SQLException {
+    return dataSource.getLogWriter();
+  }
+
+  @Override
+  public <T> T unwrap(Class<T> iface) throws SQLException {
+    if (iface == null) {
+      return null;
     }
-
-    public DataSourceWrapper(DataSource dataSource) {
-        this.dataSource = dataSource;
+    if (iface.isInstance(this)) {
+      return (T) this;
     }
+    return dataSource.unwrap(iface);
+  }
 
-    public DataSource getDataSource() {
-        return dataSource;
-    }
+  @Override
+  public void setLogWriter(PrintWriter out) throws SQLException {
+    dataSource.setLogWriter(out);
+  }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+  @Override
+  public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    if (iface == null) {
+      return false;
     }
+    return iface.isInstance(this) || dataSource.isWrapperFor(iface);
+  }
 
-    @Override
-    public PrintWriter getLogWriter() throws SQLException {
-        return dataSource.getLogWriter();
-    }
+  @Override
+  public Connection getConnection() throws SQLException {
+    return dataSource.getConnection();
+  }
 
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        if (iface == null) {
-            return null;
-        }
-        if (iface.isInstance(this)) {
-            return (T) this;
-        }
-        return dataSource.unwrap(iface);
-    }
+  @Override
+  public Connection getConnection(String username, String password) throws SQLException {
+    return dataSource.getConnection(username, password);
+  }
 
-    @Override
-    public void setLogWriter(PrintWriter out) throws SQLException {
-        dataSource.setLogWriter(out);
-    }
+  @Override
+  public void setLoginTimeout(int seconds) throws SQLException {
+    dataSource.setLoginTimeout(seconds);
+  }
 
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        if (iface == null) {
-            return false;
-        }
-        return iface.isInstance(this) || dataSource.isWrapperFor(iface);
-    }
+  @Override
+  public int getLoginTimeout() throws SQLException {
+    return dataSource.getLoginTimeout();
+  }
 
-    @Override
-    public Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
-    }
-
-    @Override
-    public void setLoginTimeout(int seconds) throws SQLException {
-        dataSource.setLoginTimeout(seconds);
-    }
-
-    @Override
-    public Connection getConnection(String username, String password) throws SQLException {
-        return dataSource.getConnection(username, password);
-    }
-
-    @Override
-    public int getLoginTimeout() throws SQLException {
-        return dataSource.getLoginTimeout();
-    }
-
-    @Override
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return dataSource.getParentLogger();
-    }
+  @Override
+  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    return dataSource.getParentLogger();
+  }
 }

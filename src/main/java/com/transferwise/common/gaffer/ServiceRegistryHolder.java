@@ -1,43 +1,44 @@
 package com.transferwise.common.gaffer;
 
 public class ServiceRegistryHolder {
-    private static volatile ServiceRegistry serviceRegistry;
-    private static volatile Configuration configuration;
 
-    public static Configuration getConfiguration() {
+  private static volatile ServiceRegistry serviceRegistry;
+  private static volatile Configuration configuration;
+
+  public static Configuration getConfiguration() {
+    if (configuration == null) {
+      synchronized (ServiceRegistryHolder.class) {
         if (configuration == null) {
-            synchronized (ServiceRegistryHolder.class) {
-                if (configuration == null) {
-                    createConfiguration();
-                }
-            }
+          createConfiguration();
         }
-        return configuration;
+      }
     }
+    return configuration;
+  }
 
-    public static ServiceRegistry getServiceRegistry() {
+  public static ServiceRegistry getServiceRegistry() {
+    if (serviceRegistry == null) {
+      synchronized (ServiceRegistryHolder.class) {
         if (serviceRegistry == null) {
-            synchronized (ServiceRegistryHolder.class) {
-                if (serviceRegistry == null) {
-                    createServiceRegistry();
-                }
-            }
+          createServiceRegistry();
         }
-        return serviceRegistry;
+      }
     }
+    return serviceRegistry;
+  }
 
-    public static void destroyServiceRegistry() {
-        if (serviceRegistry != null) {
-            serviceRegistry.destroy();
-            serviceRegistry = null;
-        }
+  public static void destroyServiceRegistry() {
+    if (serviceRegistry != null) {
+      serviceRegistry.destroy();
+      serviceRegistry = null;
     }
+  }
 
-    private static void createServiceRegistry() {
-        serviceRegistry = new ServiceRegistry(getConfiguration());
-    }
+  private static void createServiceRegistry() {
+    serviceRegistry = new ServiceRegistry(getConfiguration());
+  }
 
-    private static void createConfiguration() {
-        configuration = new Configuration();
-    }
+  private static void createConfiguration() {
+    configuration = new Configuration();
+  }
 }
