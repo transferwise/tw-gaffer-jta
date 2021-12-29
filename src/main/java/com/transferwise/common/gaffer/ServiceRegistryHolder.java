@@ -1,10 +1,13 @@
 package com.transferwise.common.gaffer;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class ServiceRegistryHolder {
 
   private static volatile ServiceRegistry serviceRegistry;
   private static volatile Configuration configuration;
 
+  @SuppressFBWarnings(value = "MS", justification = "Meant to expose internal representation.")
   public static Configuration getConfiguration() {
     if (configuration == null) {
       synchronized (ServiceRegistryHolder.class) {

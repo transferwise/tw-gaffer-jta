@@ -20,29 +20,28 @@ java {
 jar {
     manifest {
         attributes(
-            "Implementation-Title": projectName,
-            "Implementation-Version": archiveVersion
+                "Implementation-Title": projectName,
+                "Implementation-Version": archiveVersion
         )
     }
 }
 
-dependencies {
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    compileOnly 'org.projectlombok:lombok:1.18.20'
-    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.2.3'
+def lombok = 'org.projectlombok:lombok:1.18.22'
 
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
-    testCompileOnly 'org.projectlombok:lombok:1.18.20'
-    testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.2.3'
+dependencies {
+    annotationProcessor lombok
+    compileOnly lombok
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.5.2'
+
+    testAnnotationProcessor lombok
+    testCompileOnly lombok
+    testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.5.2'
 }
 
 compileJava {
     options.encoding = 'utf-8'
     options.compilerArgs << '-parameters'
 }
-
-ext.artifactoryUser = project.hasProperty("artifactoryUser") ? project.artifactoryUser : System.env.ARTIFACTORY_USER as String
-ext.artifactoryPassword = project.hasProperty("artifactoryPassword") ? project.artifactoryPassword : System.env.ARTIFACTORY_PASSWORD as String
 
 publishing {
     publications {
@@ -79,35 +78,19 @@ publishing {
         }
     }
 
-    if (System.getenv("OPENSOURCE_PUBLISH") == "true") {
+    if (System.getenv("OSS_SIGNING_KEY")) {
         signing {
+            useInMemoryPgpKeys(System.getenv("OSS_SIGNING_KEY"), System.getenv("OSS_SIGNING_PASSWORD"))
             sign publishing.publications.mavenJava
         }
     }
 
-    javadoc {
-        if (JavaVersion.current().isJava9Compatible()) {
-            options.addBooleanOption('html5', true)
-        }
-    }
-
     repositories {
-        if (System.getenv("OPENSOURCE_PUBLISH") == "true") {
-            maven {
-                url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-                credentials {
-                    username sonatypeUsername
-                    password sonatypePassword
-                }
-            }
-        }
-        else{
-            maven {
-                url "https://arti.tw.ee/artifactory/libs-${project.version.endsWith('-SNAPSHOT') ? 'snapshot' : 'release'}-local"
-                credentials {
-                    username = artifactoryUser
-                    password = artifactoryPassword
-                }
+        maven {
+            url System.getenv("MAVEN_URL")
+            credentials {
+                username = System.getenv("MAVEN_USER")
+                password = System.getenv("MAVEN_PASSWORD")
             }
         }
     }
@@ -123,10 +106,10 @@ test {
 
 tasks.findAll { it.name.startsWith("spotbugs") }*.configure {
     effort = "max"
-
+    excludeFilter = file('spotbugs-exclude.xml')
     reports {
-        xml.enabled false
-        html.enabled true
+        xml.required = true
+        html.enabled = true
     }
 }
 
@@ -140,17 +123,7 @@ tasks.withType(Checkstyle) {
     maxWarnings = 0
 
     reports {
-        xml.enabled false
-        html.enabled true
+        xml.required = true
+        html.required = true
     }
 }
-
-task addTag(type: Exec) {
-    commandLine 'git', 'tag', "$project.name-$project.version", '-m', "$project.name-$project.version"
-}
-task pushTag(type: Exec) {
-    commandLine 'git', 'push', 'origin', "$project.name-$project.version"
-}
-
-pushTag.dependsOn addTag
-pushTag.mustRunAfter publish
