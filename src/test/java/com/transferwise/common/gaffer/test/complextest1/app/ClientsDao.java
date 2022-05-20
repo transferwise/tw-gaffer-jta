@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import org.hibernate.SessionFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
@@ -43,6 +44,27 @@ public class ClientsDao {
       if (client == null || !client.getName().equals(name)) {
         throw new IllegalStateException("Hibernate can not find client from the current transaction. Client is '" + client + "'.");
       }
+    }
+  }
+
+  @Transactional
+  public void deleteClient(String name) {
+    try {
+      jdbcTemplate.update("delte from clients where name = (?)", name);
+    } catch (DataAccessException ex) {
+      throw new ClientNotFoundException("Client " + name + " not found ");
+    }
+  }
+
+  @Transactional
+  public void deleteAccount(String referenceNumber) {
+    try (Connection con = DataSourceUtils.getConnection(accountsDataSource);
+        PreparedStatement stmt = con.prepareStatement("delete from accounts where referenceNumber = ?")) {
+      stmt.setString(1, referenceNumber);
+      stmt.execute();
+    } catch (Exception e) {
+      Throwables.throwIfUnchecked(e);
+      throw new RuntimeException(e);
     }
   }
 

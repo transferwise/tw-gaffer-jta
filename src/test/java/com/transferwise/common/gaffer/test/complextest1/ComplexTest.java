@@ -1,5 +1,6 @@
 package com.transferwise.common.gaffer.test.complextest1;
 
+import com.transferwise.common.gaffer.jdbc.DataSourceImpl;
 import com.transferwise.common.gaffer.test.complextest1.app.ClientsService;
 import com.transferwise.common.gaffer.test.complextest1.app.Config;
 import com.transferwise.common.gaffer.test.complextest1.app.DatabasesManager;
@@ -207,6 +208,26 @@ public class ComplexTest {
   }
 
   @Test
+  public void testConnReleasedAfterTxRollback() {
+    setUp();
+    try {
+      getConfig().setFailPasswordCreation(true);
+      Stat stat = new Stat("testConnReleasedAfterTxRollback");
+      try {
+        getClientsService().deleteClient(CLIENT_NAME);
+      } finally {
+        log.info("{}", stat);
+      }
+      Assert.fail("Test has invalid logic, recheck it!");
+    } catch (Exception e) {
+      log.debug(e.getMessage(), e);
+    }
+
+    Assert.assertEquals(1, getAccountDataSource().getAllConnectionGetsCount());
+    Assert.assertEquals(1, getAccountDataSource().getClosedConnectionsCount());
+  }
+
+  @Test
   public void testJms() {
     setUpJms = true;
     setUp();
@@ -241,6 +262,10 @@ public class ComplexTest {
 
   protected ClientsService getClientsService() {
     return (ClientsService) appCtxt.getBean("clientsService");
+  }
+
+  DataSourceImpl getAccountDataSource() {
+    return ((DataSourceImpl) appCtxt.getBean("accountsDataSource"));
   }
 
   protected static class Stat {

@@ -38,6 +38,7 @@ public class DataSourceImpl extends DataSourceWrapper implements DataSourceManag
   private final AtomicLong bufferedConnectionGetsCount = new AtomicLong();
   private final AtomicLong nonTransactionalConnectionGetsCount = new AtomicLong();
   private final AtomicLong autoCommitSwitchingsCount = new AtomicLong();
+  private final AtomicLong closedConnectionsCount = new AtomicLong();
 
   @PostConstruct
   public void init() {
@@ -128,10 +129,21 @@ public class DataSourceImpl extends DataSourceWrapper implements DataSourceManag
       throws SQLException {
     TransactionalConnectionImpl con = (TransactionalConnectionImpl) registry.getResource(connectionResourceKey);
     if (con == null) {
-      con = new TransactionalConnectionImpl(this, getConnectionFromDataSource(username, password), uniqueName);
-      registry.putResource(connectionResourceKey, con);
-      XAResource xaResource = new XaResourceImpl(con, order, getValidationTimeoutSeconds());
-      serviceRegistry.getTransactionManager().getTransactionImpl().enlistResource(xaResource);
+      try {
+        con = new TransactionalConnectionImpl(this, getConnectionFromDataSource(username, password), uniqueName);
+        registry.putResource(connectionResourceKey, con);
+        XAResource xaResource = new XaResourceImpl(con, order, getValidationTimeoutSeconds());
+        serviceRegistry.getTransactionManager().getTransactionImpl().enlistResource(xaResource);
+      } catch (Throwable rethrow) {
+        try {
+          if (con != null) {
+            con.closeConnection();
+          }
+        } catch (SQLException e) {
+          log.error(e.getMessage(), e);
+        }
+        throw rethrow;
+      }
     } else {
       bufferedConnectionGetsCount.incrementAndGet();
     }
@@ -184,10 +196,11 @@ public class DataSourceImpl extends DataSourceWrapper implements DataSourceManag
     }
 
     public void closeConnection() throws SQLException {
-      Connection con = getConnection();
-      dataSourceImpl.setAutoCommitBeforeRelease(con, autoCommitOnBorrow);
-      log.debug("Closing connection for resource '{}'.", resourceUniqueName);
-      con.close();
+      try (Connection con = getConnection()) {
+        dataSourceImpl.setAutoCommitBeforeRelease(con, autoCommitOnBorrow);
+        log.debug("Closing connection for resource '{}'.", resourceUniqueName);
+      }
+      dataSourceImpl.closedConnectionsCount.incrementAndGet();
     }
 
     @Override
@@ -208,8 +221,12 @@ public class DataSourceImpl extends DataSourceWrapper implements DataSourceManag
     }
 
     public void close() throws SQLException {
-      dataSourceImpl.setAutoCommitBeforeRelease(getConnection(), autoCommitOnBorrow);
-      super.close();
+      try {
+        dataSourceImpl.setAutoCommitBeforeRelease(getConnection(), autoCommitOnBorrow);
+      } finally {
+        super.close();
+      }
+      dataSourceImpl.closedConnectionsCount.incrementAndGet();
     }
   }
 
@@ -293,6 +310,10 @@ public class DataSourceImpl extends DataSourceWrapper implements DataSourceManag
   @Override
   public long getAutoCommitSwitchingCount() {
     return autoCommitSwitchingsCount.get();
+  }
+
+  public long getClosedConnectionsCount() {
+    return closedConnectionsCount.get();
   }
 
 }
