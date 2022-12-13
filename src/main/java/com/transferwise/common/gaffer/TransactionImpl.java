@@ -328,9 +328,17 @@ public class TransactionImpl implements Transaction {
     return clock.currentTimeMillis() - getStartTimeMillis() > beforeCommitValidationRequiredTimeMs;
   }
 
+  /**
+   * Checks if transaction has timed out.
+   * 
+   * <p>Timeout of 0 is considered as no timeout.
+   * 
+   * <p>Timeout of -1 is considered as using default timeout. Gaffer does not currently support default timeouts, so
+   * for now it also means no timeout is set.
+   */
   public boolean isTimedOut() {
     long timeoutMillis = getTimeoutMillis();
-    if (timeoutMillis < 0) {
+    if (timeoutMillis <= 0) {
       return false;
     }
     return clock.currentTimeMillis() > getStartTimeMillis() + timeoutMillis;
