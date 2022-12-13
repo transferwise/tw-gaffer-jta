@@ -12,7 +12,7 @@ repositories {
     mavenLocal()
 }
 
-configurations{
+configurations {
     local {
         canBeResolved(false)
         canBeConsumed(false)
@@ -69,6 +69,19 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
             artifactId = projectArtifactName
+
+            /*
+             This ensures that libraries will have explicit dependency versions in their Maven POM and Gradle module files, so that there would be less
+             ambiguity and less chances of dependency conflicts.
+            */
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+            }
 
             pom {
                 name = projectName
