@@ -19,9 +19,9 @@ import org.springframework.transaction.UnexpectedRollbackException;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:/com/transferwise/common/gaffer/test/suspended/applicationContext.xml"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class SuspendedTest {
+class SuspendedIntTest {
 
-  private static final FormatLogger log = new FormatLogger(SuspendedTest.class);
+  private static final FormatLogger log = new FormatLogger(SuspendedIntTest.class);
   @Resource(name = "clientsService")
   private ClientsService clientsService;
 

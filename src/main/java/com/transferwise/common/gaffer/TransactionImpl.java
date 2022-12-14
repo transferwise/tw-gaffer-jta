@@ -35,7 +35,6 @@ public class TransactionImpl implements Transaction {
   private final List<Synchronization> synchronizations = new CopyOnWriteArrayList<>();
   private final List<Synchronization> interposedSynchronizations = new CopyOnWriteArrayList<>();
   private final Map<Object, Object> resources = new ConcurrentHashMap<>();
-  private final Clock clock;
   private final long startTimeMillis;
   private long beforeCommitValidationRequiredTimeMs = -1;
   private long timeoutMillis = -1;
@@ -46,8 +45,7 @@ public class TransactionImpl implements Transaction {
   public TransactionImpl() {
     ServiceRegistry serviceRegistry = ServiceRegistryHolder.getServiceRegistry();
     String instanceId = serviceRegistry.getConfiguration().getInstanceId();
-    this.clock = serviceRegistry.getClock();
-    startTimeMillis = clock.currentTimeMillis();
+    startTimeMillis = getClock().currentTimeMillis();
     globalTransactionId = new UidImpl(instanceId, startTimeMillis);
     exceptionThrower = new ExceptionThrower(serviceRegistry.getConfiguration().isLogExceptions());
 
@@ -325,14 +323,14 @@ public class TransactionImpl implements Transaction {
     if (beforeCommitValidationRequiredTimeMs < 0) {
       return false;
     }
-    return clock.currentTimeMillis() - getStartTimeMillis() > beforeCommitValidationRequiredTimeMs;
+    return getClock().currentTimeMillis() - getStartTimeMillis() > beforeCommitValidationRequiredTimeMs;
   }
 
   /**
    * Checks if transaction has timed out.
-   * 
+   *
    * <p>Timeout of 0 is considered as no timeout.
-   * 
+   *
    * <p>Timeout of -1 is considered as using default timeout. Gaffer does not currently support default timeouts, so
    * for now it also means no timeout is set.
    */
@@ -341,7 +339,7 @@ public class TransactionImpl implements Transaction {
     if (timeoutMillis <= 0) {
       return false;
     }
-    return clock.currentTimeMillis() > getStartTimeMillis() + timeoutMillis;
+    return getClock().currentTimeMillis() > getStartTimeMillis() + timeoutMillis;
   }
 
   private void fireBeforeCompletionEvent() {
@@ -378,6 +376,10 @@ public class TransactionImpl implements Transaction {
       return oa > ob ? 1 : oa == ob ? 0 : -1;
     });
     return result;
+  }
+
+  protected Clock getClock() {
+    return ServiceRegistryHolder.getServiceRegistry().getClock();
   }
 
   public String getTransactionInfo() {

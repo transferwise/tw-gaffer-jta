@@ -15,10 +15,12 @@ ext.projectArtifactName = 'tw-gaffer-jta'
 apply from: 'build-common.gradle'
 
 dependencies {
-    implementation libraries.javaxTransactionApi
+    api libraries.javaxTransactionApi
+
     implementation libraries.slf4jApi
     implementation libraries.commonsLang3
     implementation libraries.jakartaAnnotationApi
+    implementation libraries.twBaseUtils
 
     testImplementation libraries.springContext
     testImplementation libraries.springBootStarterTest

@@ -19,9 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 
-class ComplexTest {
+class ComplexIntTest {
 
-  protected static final Logger log = LoggerFactory.getLogger(ComplexTest.class);
+  protected static final Logger log = LoggerFactory.getLogger(ComplexIntTest.class);
 
   protected static final String CONFIG_KEY_SECRETS_DATABASE_URL = "database.secrets.url";
   protected static final String CONFIG_KEY_MAX_POOL_SIZE = "maxPoolSize";
