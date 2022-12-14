@@ -13,11 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   So we do the same.
 
   The issue was discovered in one of our service, where one method had `@Transactional(timeout=1)`.
-  When Spring exits that method, it set transaction timeout through `JtaTransactionManager` to `0`, indicating that there
+  When Spring exits that method, it sets transaction timeout through `JtaTransactionManager` to `0`, indicating that there
   should not be any timeout for next transactions.
 
-  Gaffer however interpreted this has there is a timeout with duration of 0, and ofc. started to give timeout exceptions for all following
+  Gaffer however interpreted this as there is a timeout with duration of 0, and ofc. started to give timeout exceptions for all following
   transactions.
+
+  As a side note, it seems like Spring `JtaTransactionManager` is misbehaving. It would be more logical it to either
+  a) restore the timeout value to what it was before entering the method
+  b) set it to `-1`, which signal to JTA transaction manager to use default timeout.
 
 ### Removed
 
