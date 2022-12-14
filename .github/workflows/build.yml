@@ -76,9 +76,7 @@ jobs:
     name: "Build and Test"
     if: always()
     runs-on:
-      - self-hosted
-      - production
-      - large
+      - ubuntu-latest
     needs: matrix_build
     container:
       image: azul/zulu-openjdk:17
