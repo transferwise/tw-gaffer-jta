@@ -7,7 +7,6 @@ ext {
             guava                 : 'com.google.guava:guava:31.1-jre',
             spotbugsAnnotations   : "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}",
             springBootDependencies: "org.springframework.boot:spring-boot-dependencies:${springBootVersion}",
-            twBaseUtils           : 'com.transferwise.common:tw-base-utils:1.8.1',
 
             // versions managed by spring-boot-dependencies platform
             commonsLang3          : 'org.apache.commons:commons-lang3',
