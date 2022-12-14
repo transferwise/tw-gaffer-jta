@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Transaction timeout 0 is widely considered as no timeout is applied.
   So we do the same.
 
+  The issue was discovered in one of our service, where one method had `@Transactional(timeout=1)`.
+  When Spring exits that method, it set transaction timeout through `JtaTransactionManager` to `0`, indicating that there
+  should not be any timeout for next transactions.
+
+  Gaffer however interpreted this has there is a timeout with duration of 0, and ofc. started to give timeout exceptions for all following
+  transactions.
+
 ### Removed
 
 * JMS Support
@@ -25,7 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Created matrix tests for Spring Boot 2.5, 2.6 and 2.7 dependencies.
 
 ## [1.5.0] - 2022-05-19
+
 ### Changed
+
 * Prevent connection from leaking when any tx associated resource error occurs.
 
 ## [1.4.0] - 2021-05-27
