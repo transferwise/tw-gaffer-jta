@@ -10,8 +10,9 @@ public class ServiceRegistry {
   private final TransactionSynchronizationRegistry transactionSynchronizationRegistry;
   private final UserTransactionImpl userTransaction;
   private final Configuration configuration;
-  private final Clock clock;
   private final TransactionManagerStatistics transactionManagerStatistics;
+
+  private Clock clock;
 
   protected ServiceRegistry(Configuration configuration) {
     this.configuration = configuration;
@@ -47,5 +48,9 @@ public class ServiceRegistry {
 
   public TransactionManagerStatistics getTransactionManagerStatistics() {
     return transactionManagerStatistics;
+  }
+
+  protected void setClock(Clock clock) {
+    this.clock = clock;
   }
 }

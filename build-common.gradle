@@ -3,11 +3,38 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply plugin: 'checkstyle'
 
+apply from: "${project.rootDir}/build.libraries.gradle"
+
 group = 'com.transferwise.common'
 
 repositories {
     mavenCentral()
     mavenLocal()
+}
+
+configurations {
+    local {
+        canBeResolved(false)
+        canBeConsumed(false)
+    }
+    compileClasspath {
+        extendsFrom(local)
+    }
+    runtimeClasspath {
+        extendsFrom(local)
+    }
+    testCompileClasspath {
+        extendsFrom(local)
+    }
+    testRuntimeClasspath {
+        extendsFrom(local)
+    }
+    annotationProcessor {
+        extendsFrom(local)
+    }
+    testAnnotationProcessor {
+        extendsFrom(local)
+    }
 }
 
 java {
@@ -26,16 +53,10 @@ jar {
     }
 }
 
-def lombok = 'org.projectlombok:lombok:1.18.22'
-
 dependencies {
-    annotationProcessor lombok
-    compileOnly lombok
-    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.5.2'
-
-    testAnnotationProcessor lombok
-    testCompileOnly lombok
-    testCompileOnly 'com.github.spotbugs:spotbugs-annotations:4.5.2'
+    local platform(libraries.springBootDependencies + '!!')
+    local libraries.lombok
+    local libraries.spotbugsAnnotations
 }
 
 compileJava {
@@ -48,6 +69,19 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
             artifactId = projectArtifactName
+
+            /*
+             This ensures that libraries will have explicit dependency versions in their Maven POM and Gradle module files, so that there would be less
+             ambiguity and less chances of dependency conflicts.
+            */
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+            }
 
             pom {
                 name = projectName
@@ -97,6 +131,8 @@ publishing {
 }
 
 test {
+    useJUnitPlatform()
+
     testLogging {
         events "passed", "skipped", "failed", "standardError"
         showStackTraces = true

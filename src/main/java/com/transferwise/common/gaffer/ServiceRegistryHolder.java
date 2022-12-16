@@ -19,6 +19,7 @@ public class ServiceRegistryHolder {
     return configuration;
   }
 
+  @SuppressFBWarnings("MS")
   public static ServiceRegistry getServiceRegistry() {
     if (serviceRegistry == null) {
       synchronized (ServiceRegistryHolder.class) {

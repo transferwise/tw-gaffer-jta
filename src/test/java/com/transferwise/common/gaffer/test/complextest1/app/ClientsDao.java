@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -20,7 +21,7 @@ public class ClientsDao {
 
   private JdbcTemplate jdbcTemplate;
 
-  @Resource(name = "clientsSessionFactory")
+  @Autowired
   private SessionFactory sessionFactory;
 
   @Resource(name = "clientsDataSource")
@@ -38,7 +39,7 @@ public class ClientsDao {
 
   private void checkIfHibernateIsUsingSameConnection(String name) {
     if (config.isUseHibernate()) {
-      Client client = (Client) sessionFactory.getCurrentSession().createQuery("from Client as client where client.name=?").setString(0, name)
+      Client client = (Client) sessionFactory.getCurrentSession().createQuery("from Client as client where client.name=?1").setParameter(1, name)
           .uniqueResult();
 
       if (client == null || !client.getName().equals(name)) {

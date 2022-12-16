@@ -118,6 +118,10 @@ public class TransactionManagerImpl implements TransactionManager {
     transactionTimeoutsSeconds.set(seconds);
   }
 
+  public Integer getTransactionTimeout() {
+    return transactionTimeoutsSeconds.get();
+  }
+
   @Override
   public Transaction suspend() {
     TransactionImpl transaction = getTransactionImpl();
