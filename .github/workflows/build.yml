@@ -87,6 +87,8 @@ jobs:
       - name: Verify matrix jobs succeeded
         if: ${{ needs.matrix_build.result != 'success' }}
         run: exit 1
+      - name: Checkout repository
+        uses: actions/checkout@v3
       - name: "Tag release"
         if: github.ref == 'refs/heads/master'
         run: GRADLE_USER_HOME=$HOME/.gradle ./gradlew tagRelease --console=plain --no-daemon
