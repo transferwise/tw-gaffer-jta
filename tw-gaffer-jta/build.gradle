@@ -21,5 +21,6 @@ dependencies {
     testImplementation libraries.guava
     testImplementation libraries.hibernateCore
     testImplementation libraries.springBootStarterJpa
-    testImplementation libraries.hsqldb
+
+    testRuntimeOnly libraries.hsqldb
 }

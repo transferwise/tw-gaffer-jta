@@ -28,7 +28,6 @@ public class GafferJtaSpringIntegrationDataSourceAdapter extends DataSourceWrapp
     return con;
   }
 
-
   protected Integer getCurrentIsolationLevel() {
     return TransactionSynchronizationManager.getCurrentTransactionIsolationLevel();
   }

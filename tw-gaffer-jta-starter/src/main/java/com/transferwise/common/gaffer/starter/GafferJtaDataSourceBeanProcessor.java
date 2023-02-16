@@ -27,6 +27,7 @@ public class GafferJtaDataSourceBeanProcessor implements BeanPostProcessor, Orde
       var dataSource = (DataSource) bean;
 
       if (dataSource.isWrapperFor(GafferJtaDataSource.class)) {
+        // Why add the starter, if service already wrapped it by itself?
         log.warn("Datasource '" + dataSource + "' is already wrapped with `DataSourceImpl`.");
         return dataSource;
       }

@@ -22,5 +22,4 @@ dependencies {
     testImplementation libraries.springBootStarterTest
 
     testRuntimeOnly libraries.springBootStarterValidation
-    testRuntimeOnly libraries.mariadbJavaClient
 }
