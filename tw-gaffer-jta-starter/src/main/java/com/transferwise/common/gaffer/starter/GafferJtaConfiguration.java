@@ -17,14 +17,14 @@ public class GafferJtaConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public UserTransaction gafferUserTransaction() {
+  public UserTransaction gafferJtaUserTransaction() {
     ServiceRegistry serviceRegistry = ServiceRegistryHolder.getServiceRegistry();
     return serviceRegistry.getUserTransaction();
   }
 
   @Bean
   @ConditionalOnMissingBean
-  public TransactionManager gafferTransactionManager(GafferJtaProperties properties) {
+  public TransactionManager gafferJtaTransactionManager(GafferJtaProperties properties) {
     ServiceRegistry serviceRegistry = ServiceRegistryHolder.getServiceRegistry();
     serviceRegistry.getConfiguration().setBeforeCommitValidationRequiredTimeMs(properties.getBeforeCommitValidationRequiredTime().toMillis());
     return serviceRegistry.getTransactionManager();
@@ -32,7 +32,7 @@ public class GafferJtaConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public JtaTransactionManager transactionManager(UserTransaction userTransaction, TransactionManager transactionManager) {
+  public JtaTransactionManager gafferJtaJtaTransactionManager(UserTransaction userTransaction, TransactionManager transactionManager) {
     ServiceRegistry serviceRegistry = ServiceRegistryHolder.getServiceRegistry();
     JtaTransactionManager jtaTransactionManager = new JtaTransactionManager(userTransaction, transactionManager);
     jtaTransactionManager.setTransactionSynchronizationRegistry(serviceRegistry.getTransactionSynchronizationRegistry());
