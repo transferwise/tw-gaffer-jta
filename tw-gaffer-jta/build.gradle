@@ -1,0 +1,25 @@
+ext.projectName = "tw-gaffer-jta"
+ext.projectDescription = "tw-gaffer-jta"
+ext.projectArtifactName = "tw-gaffer-jta"
+
+apply from: "${project.rootDir}/build.common.gradle"
+apply from: "${project.rootDir}/build.library.gradle"
+
+dependencies {
+    api libraries.javaxTransactionApi
+
+    implementation libraries.slf4jApi
+    implementation libraries.commonsLang3
+    implementation libraries.jakartaAnnotationApi
+    implementation libraries.twBaseUtils
+
+    testImplementation libraries.springContext
+    testImplementation libraries.springBootStarterTest
+    testImplementation libraries.springBootStarterJdbc
+    testImplementation libraries.hamcrestCore
+    testImplementation libraries.tomcatJdbc
+    testImplementation libraries.guava
+    testImplementation libraries.hibernateCore
+    testImplementation libraries.springBootStarterJpa
+    testImplementation libraries.hsqldb
+}

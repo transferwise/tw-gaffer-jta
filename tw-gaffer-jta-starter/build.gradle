@@ -1,0 +1,26 @@
+ext.projectName = "tw-gaffer-jta-starter"
+ext.projectDescription = "tw-gaffer-jta-starter"
+ext.projectArtifactName = "tw-gaffer-jta-starter"
+
+apply from: "${project.rootDir}/build.common.gradle"
+apply from: "${project.rootDir}/build.library.gradle"
+
+dependencies {
+    api libraries.javaxTransactionApi
+    api project(":tw-gaffer-jta")
+
+    annotationProcessor libraries.springBootConfigurationProcessor
+    compileOnly libraries.springBootConfigurationProcessor
+
+
+    implementation libraries.jakartaValidationApi
+    implementation libraries.hikariCp
+    implementation libraries.springBootStarter
+    implementation libraries.springBootStarterJdbc
+    implementation libraries.twBaseUtils
+
+    testImplementation libraries.springBootStarterTest
+
+    testRuntimeOnly libraries.springBootStarterValidation
+    testRuntimeOnly libraries.mariadbJavaClient
+}

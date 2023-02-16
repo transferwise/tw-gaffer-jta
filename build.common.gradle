@@ -1,0 +1,139 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
+apply plugin: 'idea'
+apply plugin: 'java-library'
+apply plugin: "com.github.spotbugs"
+apply plugin: 'checkstyle'
+
+group = 'com.transferwise.common'
+
+ext.artifactoryUser = project.hasProperty("artifactoryUser") ? project.artifactoryUser : System.env.ARTIFACTORY_USER as String
+ext.artifactoryPassword = project.hasProperty("artifactoryPassword") ? project.artifactoryPassword : System.env.ARTIFACTORY_PASSWORD as String
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+apply from: "${project.rootDir}/build.libraries.gradle"
+
+configurations {
+    local {
+        canBeResolved(false)
+        canBeConsumed(false)
+    }
+    compileClasspath {
+        extendsFrom(local)
+    }
+    runtimeClasspath {
+        extendsFrom(local)
+    }
+    testCompileClasspath {
+        extendsFrom(local)
+    }
+    testRuntimeClasspath {
+        extendsFrom(local)
+    }
+    annotationProcessor {
+        extendsFrom(local)
+    }
+    testAnnotationProcessor {
+        extendsFrom(local)
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    withSourcesJar()
+    withJavadocJar()
+}
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": projectName,
+                "Implementation-Version": archiveVersion
+        )
+    }
+}
+
+dependencies {
+    local platform(libraries.springBootDependencies + '!!')
+    local libraries.lombok
+    local libraries.spotbugsAnnotations
+}
+
+compileJava {
+    options.encoding = 'utf-8'
+    options.compilerArgs << '-parameters'
+    options.compilerArgs << '-Xlint'
+    options.compilerArgs << '-Xlint:-processing'
+
+    options.fork = true
+    options.forkOptions.jvmArgs << '-Xmx256m'
+}
+
+compileTestJava {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+
+    options.fork = true
+    options.forkOptions.jvmArgs << '-Xmx256m'
+}
+
+tasks.withType(Checkstyle) {
+    config = resources.text.fromFile(file('../google_checks.xml'))
+
+    // Flyway requires Vx__ class name, which ofc conflicts with all sensible rules.
+    exclude "db/migration/**"
+
+    maxWarnings = 0
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+// Exclude generated sources
+checkstyleMain.source = "src/main/java"
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": projectName,
+                "Implementation-Version": archiveVersion
+        )
+    }
+}
+
+test {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    useJUnitPlatform()
+    jvmArgs("-Xmx512m")
+    testLogging {
+        events TestLogEvent.STARTED, TestLogEvent.FAILED, TestLogEvent.SKIPPED, TestLogEvent.PASSED,
+                TestLogEvent.STANDARD_ERROR
+        showExceptions = true
+        showStackTraces = true
+        exceptionFormat = TestExceptionFormat.FULL
+    }
+}
+
+tasks.findAll { it.name.startsWith("spotbugs") }*.configure {
+    effort = "max"
+
+    excludeFilter = file('../spotbugs-exclude.xml')
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}

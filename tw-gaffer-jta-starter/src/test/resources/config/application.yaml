@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: tw-gaffer-jta-starter-test
+  datasource:
+    url: "jdbc:mariadb://${MARIADB_HOST:localhost}:${MARIADB_TCP_3306}/tw-jdbc?useBulkStmts=false"
+    password: "example-password-change-me"
+    username: "root"
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 0
+      pool-name: "mydb"
+
+tw-gaffer-jta:
+  core:
+    databases:
+      mydb:
+        commitOrder: 15
+        connectionValidationInterval: 31s

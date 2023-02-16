@@ -12,25 +12,7 @@ ext.projectDescription = 'Transferwise Gaffer 1PC JTA - efficient 1PC JTA for en
 ext.projectGitHubRepoName = 'tw-gaffer-jta'
 ext.projectArtifactName = 'tw-gaffer-jta'
 
-apply from: 'build-common.gradle'
-
-dependencies {
-    api libraries.javaxTransactionApi
-
-    implementation libraries.slf4jApi
-    implementation libraries.commonsLang3
-    implementation libraries.jakartaAnnotationApi
-
-    testImplementation libraries.springContext
-    testImplementation libraries.springBootStarterTest
-    testImplementation libraries.springBootStarterJdbc
-    testImplementation libraries.hamcrestCore
-    testImplementation libraries.tomcatJdbc
-    testImplementation libraries.guava
-    testImplementation libraries.hibernateCore
-    testImplementation libraries.springBootStarterJpa
-    testImplementation libraries.hsqldb
-}
+apply from: 'build.common.gradle'
 
 idea.project {
     vcs = 'Git'
@@ -49,17 +31,6 @@ task tagRelease {
         }
         catch (RefAlreadyExistsException ignored) {
             logger.warn("Tag v$version already exists.")
-        }
-    }
-}
-
-group = "com.transferwise.common"
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            username = System.getenv("SONATYPE_USER")
-            password = System.getenv("SONATYPE_PASSWORD")
         }
     }
 }
