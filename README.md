@@ -12,7 +12,7 @@ code and reduces the probability of half done 1PC scenarios.
 
 ## Configuration in Spring Boot Service
 
-Add `com.transferwise.common:tw-gaffer-jta` dependency.
+Add `com.transferwise.common:tw-gaffer-jta-starter` dependency.
 
 It will create the necessary transaction manager objects and wrap all data sources exposed as beans with Gaffer's `DataSourceImpl`.
 
