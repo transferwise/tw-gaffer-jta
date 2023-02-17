@@ -16,9 +16,10 @@ public class GafferJtaSpringIntegrationDataSourceAdapter extends DataSourceWrapp
   @Override
   public Connection getConnection(String username, String password) throws SQLException {
     Connection con = super.getConnection(username, password);
-    Boolean readOnlyToUse = getCurrentReadOnlyFlag();
-    if (readOnlyToUse != null) {
-      con.setReadOnly(readOnlyToUse);
+
+    // Default is false anyway, so we don't set that explicitly. To avoid possible round-trips on certain jdbc drivers.
+    if (isCurrentSetToReadOnly()) {
+      con.setReadOnly(true);
     }
 
     Integer isolationLevelToUse = getCurrentIsolationLevel();
@@ -32,9 +33,7 @@ public class GafferJtaSpringIntegrationDataSourceAdapter extends DataSourceWrapp
     return TransactionSynchronizationManager.getCurrentTransactionIsolationLevel();
   }
 
-  @SuppressFBWarnings("NP")
-  protected Boolean getCurrentReadOnlyFlag() {
-    boolean txReadOnly = TransactionSynchronizationManager.isCurrentTransactionReadOnly();
-    return (txReadOnly ? Boolean.TRUE : null);
+  protected boolean isCurrentSetToReadOnly() {
+    return TransactionSynchronizationManager.isCurrentTransactionReadOnly();
   }
 }
