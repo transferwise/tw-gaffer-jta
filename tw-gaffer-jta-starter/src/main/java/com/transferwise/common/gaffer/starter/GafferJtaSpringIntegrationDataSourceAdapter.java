@@ -1,7 +1,6 @@
 package com.transferwise.common.gaffer.starter;
 
 import com.transferwise.common.gaffer.jdbc.DataSourceWrapper;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
