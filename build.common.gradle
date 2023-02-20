@@ -73,6 +73,10 @@ compileJava {
 
     options.fork = true
     options.forkOptions.jvmArgs << '-Xmx256m'
+
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
 }
 
 compileTestJava {
