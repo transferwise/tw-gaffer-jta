@@ -34,3 +34,12 @@ task tagRelease {
         }
     }
 }
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            username = System.getenv("SONATYPE_USER")
+            password = System.getenv("SONATYPE_PASSWORD")
+        }
+    }
+}
