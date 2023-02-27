@@ -7,16 +7,8 @@
 > Use the `@application-engineering-on-call` handle on Slack for help.
 ---
 
-Meant to replace default Spring Transaction Manager mainly for performance reasons. But also allows to write pool-of-1-compatible
-code and reduces the probability of half done 1PC scenarios.
-
-## Configuration in Spring Boot Service
-
-Add `com.transferwise.common:tw-gaffer-jta-starter` dependency.
-
-It will create the necessary transaction manager objects and wrap all data sources exposed as beans with Gaffer's `DataSourceImpl`.
-
-You can configure each datasource via `GafferJtaProperties` class.
+## 📚 Documentation
+Documentation can be found in the [docs](docs) directory or for Wisers, on the [developer portal](https://dev.tw.ee/docs/default/Component/tw-gaffer-jta).
 
 ## License
 Copyright 2021 TransferWise Ltd.
