@@ -20,6 +20,6 @@ dependencies {
 
 Add the `com.transferwise.common:tw-gaffer-jta-starter` dependency.
 
-It will create the necessary transaction manager objects and wrap all data sources exposed as beans with Gaffer's `DataSourceImpl`.
+It will create the necessary transaction manager objects and wrap all data sources exposed as beans with Gaffer's `GafferJtaDataSource`.
 
 You can configure each datasource via `GafferJtaProperties` class.
