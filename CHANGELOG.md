@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2023-03-30
+
+### Changed
+
+* `gafferJtaJtaTransactionManager` bean name to `transactionManager`.
+  We would like the `tw-gaffer-jta-starter` to be fully autoconfiguring the service. Unfortunately, some Spring Boot starter libraries are
+  specifically expecting a bean named `transactionManager`.
+  You can override the bean name by specifying `tw-gaffer-jta.transactionManagerRef` property.
+
+### Migration Guide
+
+#### Transaction Manager Bean Name
+
+If you were using hardcoded `gafferJtaJtaTransactionManager` bean name in your service, you have to change it now to `transactionManager`.
+Or, alternatively, set `tw-gaffer-jta.transactionManagerRef: gafferJtaJtaTransactionManager` to restore the previous behavior.
+
 ## [2.1.0] - 2023-02-14
 
 ### Added
@@ -14,6 +30,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Connection and DataSource wrappers are now implementing `tw-base-utils`'s wrapper interfaces.
+* `com.transferwise.common.gaffer.jdbc.DataSourceImpl` class was renamed to `com.transferwise.common.gaffer.jdbc.GafferJtaDataSource`.
+
+### Migration Guide
+
+#### Auto Configuration for Gradle
+
+It is recommended to use full autoconfiguration, which will set up the transaction manager and instrument all the data sources.
+
+For that
+
+1. Make sure, that all your data sources are exposed as beans.
+   If this is not possible, you still need to wrap those data sources into `GafferJtaDataSource`, manually.
+2. Remove `tw-gaffer-jta` from `implementation` configuration.
+   Unless, you would need manual wrapping of `GafferJtaDataSource`.
+3. Remove custom wrappings of `GafferJtaDataSource` / `DataSourceImpl`.
+   In Wise context, your data source beans should be just plain `HikariDataSource` instances.
+4. Remove the code creating all the beans now defined in the `GafferJtaConfiguration` class.
+   In a typical Wise service, it comes down to deleting the whole `TransactionManagerConfiguration` class.
+5. Add `tw-gaffer-jta` into `runtimeOnly` configuration.
+
+#### Without Auto Configuration
+
+* Change all `com.transferwise.common.gaffer.jdbc.DataSourceImpl` occurrences to `com.transferwise.common.gaffer.jdbc.GafferJtaDataSource`
 
 ## [2.0.0] - 2022-12-13
 
