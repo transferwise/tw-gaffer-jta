@@ -12,14 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `gafferJtaJtaTransactionManager` bean name to `transactionManager`.
   We would like the `tw-gaffer-jta-starter` to be fully autoconfiguring the service. Unfortunately, some Spring Boot starter libraries are
   specifically expecting a bean named `transactionManager`.
-  You can override the bean name by specifying `tw-gaffer-jta.transactionManagerRef` property.
 
 ### Migration Guide
 
 #### Transaction Manager Bean Name
 
 If you were using hardcoded `gafferJtaJtaTransactionManager` bean name in your service, you have to change it now to `transactionManager`.
-Or, alternatively, set `tw-gaffer-jta.transactionManagerRef: gafferJtaJtaTransactionManager` to restore the previous behavior.
 
 ## [2.1.0] - 2023-02-14
 

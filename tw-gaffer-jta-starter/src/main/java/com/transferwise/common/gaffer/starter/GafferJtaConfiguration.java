@@ -30,7 +30,7 @@ public class GafferJtaConfiguration {
     return serviceRegistry.getTransactionManager();
   }
 
-  @Bean("${tw-gaffer-jta.transactionManagerRef:transactionManager}")
+  @Bean("transactionManager")
   @ConditionalOnMissingBean
   public JtaTransactionManager gafferJtaJtaTransactionManager(UserTransaction userTransaction, TransactionManager transactionManager) {
     ServiceRegistry serviceRegistry = ServiceRegistryHolder.getServiceRegistry();
