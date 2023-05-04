@@ -1,4 +1,4 @@
-name: "Build and Publish"
+name: "Build and Test/tw-gaffer-jta"
 
 on:
   pull_request:
