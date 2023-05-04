@@ -1,5 +1,5 @@
 ext {
-    springBootVersion = "3.0.5"
+    springBootVersion = System.getenv("SPRING_BOOT_VERSION") ?: "3.0.5"
 
     libraries = [
             // explicit versions
