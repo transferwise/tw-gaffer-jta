@@ -1,4 +1,4 @@
-name: "Build and Test/tw-gaffer-jta"
+name: "Build and Test/tw-gaffer-jta-sb2"
 
 on:
   pull_request:
@@ -13,10 +13,20 @@ defaults:
     working-directory: tw-gaffer-jta-sb2/
 
 jobs:
-  build:
-    name: "Build and Test"
+  matrix_build:
+    name: "Matrix Build"
     runs-on:
       - ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 100
+      matrix:
+        spring_boot_version:
+          - 2.7.8
+          - 2.6.14
+          - 2.5.14
+    env:
+      SPRING_BOOT_VERSION: ${{ matrix.spring_boot_version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -86,6 +96,12 @@ jobs:
       - ubuntu-latest
     needs: build
     steps:
+      # Needed hacks to properly fail the build when one matrix build fails.
+      - name: Do something so that GHA is happy
+        run: echo "Be happy!"
+      - name: Verify matrix jobs succeeded
+        if: ${{ needs.matrix_build.result != 'success' }}
+        run: exit 1
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Setup Gradle
