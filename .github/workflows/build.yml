@@ -9,10 +9,19 @@ on:
       - master
 
 jobs:
-  build:
-    name: "Build and Test"
+  matrix_build:
+    name: "Matrix Build"
     runs-on:
       - ubuntu-latest
+    continue-on-error: false
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        spring_boot_version:
+          - 3.0.5
+    env:
+      SPRING_BOOT_VERSION: ${{ matrix.spring_boot_version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -78,7 +87,7 @@ jobs:
     name: "Publish"
     runs-on:
       - ubuntu-latest
-    needs: build
+    needs: matrix_build
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
