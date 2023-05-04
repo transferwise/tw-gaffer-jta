@@ -94,7 +94,7 @@ jobs:
     name: "Publish"
     runs-on:
       - ubuntu-latest
-    needs: build
+    needs: matrix_build
     steps:
       # Needed hacks to properly fail the build when one matrix build fails.
       - name: Do something so that GHA is happy
