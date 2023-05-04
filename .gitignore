@@ -1,15 +1,8 @@
-/logs
-/build
-/out
-/activemq-data
-/.gradle
-
-/.idea
+logs
+build
+out
+activemq-data
+.idea
 
 ## Gradle
-/caches
-/native
-/wrapper
-/run
-/daemon
-/tw-gaffer-jta/build/
+.gradle
