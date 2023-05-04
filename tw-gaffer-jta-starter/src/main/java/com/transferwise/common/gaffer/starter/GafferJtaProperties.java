@@ -1,11 +1,11 @@
 package com.transferwise.common.gaffer.starter;
 
 import com.transferwise.common.gaffer.jdbc.AutoCommitStrategy;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.validation.annotation.Validated;

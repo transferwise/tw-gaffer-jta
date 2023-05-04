@@ -1,9 +1,9 @@
 package com.transferwise.common.gaffer.test.complextest1.app;
 
 import com.google.common.base.Throwables;
+import jakarta.annotation.Resource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
