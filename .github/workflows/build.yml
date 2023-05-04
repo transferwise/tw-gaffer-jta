@@ -1,4 +1,4 @@
-name: "Build and Publish"
+name: "Spring Boot 3"
 
 on:
   pull_request:

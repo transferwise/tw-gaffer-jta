@@ -1,4 +1,4 @@
-name: "Build and Publish/tw-gaffer-jta-sb2"
+name: "Spring Boot 2"
 
 on:
   pull_request:
