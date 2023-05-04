@@ -1,5 +1,8 @@
-rootProject.name = 'tw-gaffer-jta'
+rootProject.name = 'tw-gaffer-jta-sb3'
 
 include 'tw-gaffer-jta'
 include 'tw-gaffer-jta-starter'
 
+rootProject.children.each {
+    it.name += "-sb3"
+}

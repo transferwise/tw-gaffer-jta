@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.transferwise.common.gaffer.test.complextest1.ComplexIntTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2023-05-04T13:25:59" hostname="C02FW1AEMD6R" time="6.811">
+  <properties/>
+  <testcase name="testEfficientResourceHandling()" classname="com.transferwise.common.gaffer.test.complextest1.ComplexIntTest" time="1.923"/>
+  <testcase name="testFullCommit()" classname="com.transferwise.common.gaffer.test.complextest1.ComplexIntTest" time="0.222"/>
+  <testcase name="testEfficientResourceHandlingTestingMethod()" classname="com.transferwise.common.gaffer.test.complextest1.ComplexIntTest" time="0.171"/>
+  <testcase name="testLocalTransactionsFullRollback()" classname="com.transferwise.common.gaffer.test.complextest1.ComplexIntTest" time="0.153"/>
+  <testcase name="testParallelWork()" classname="com.transferwise.common.gaffer.test.complextest1.ComplexIntTest" time="3.75"/>
+  <testcase name="testConnReleasedAfterTxRollback()" classname="com.transferwise.common.gaffer.test.complextest1.ComplexIntTest" time="0.149"/>
+  <testcase name="testFullCommitWithHibernate()" classname="com.transferwise.common.gaffer.test.complextest1.ComplexIntTest" time="0.238"/>
+  <testcase name="testFullRollback()" classname="com.transferwise.common.gaffer.test.complextest1.ComplexIntTest" time="0.107"/>
+  <testcase name="testLocalTransactionsFullCommit()" classname="com.transferwise.common.gaffer.test.complextest1.ComplexIntTest" time="0.093"/>
+  <system-out><![CDATA[14:25:58,940 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Found resource [logback-test.xml] at [file:/Users/nerius.ilmonas/Projects/tw-gaffer-jta/tw-gaffer-jta-sb2/tw-gaffer-jta/build/resources/test/logback-test.xml]
+14:25:59,026 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - Will scan for changes in [file:/Users/nerius.ilmonas/Projects/tw-gaffer-jta/tw-gaffer-jta-sb2/tw-gaffer-jta/build/resources/test/logback-test.xml] 
+14:25:59,026 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - Setting ReconfigureOnChangeTask scanning period to 10 seconds
+14:25:59,028 |-INFO in ch.qos.logback.core.joran.action.StatusListenerAction - Added status listener of type [ch.qos.logback.core.status.OnConsoleStatusListener]
+14:25:59,028 |-INFO in ch.qos.logback.classic.joran.action.LoggerContextListenerAction - Adding LoggerContextListener of type [ch.qos.logback.classic.jul.LevelChangePropagator] to the object stack
+14:25:59,032 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@77128536 - Propagating DEBUG level on Logger[ROOT] onto the JUL framework
+14:25:59,032 |-INFO in ch.qos.logback.classic.joran.action.LoggerContextListenerAction - Starting LoggerContextListener
+14:25:59,033 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
+14:25:59,035 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
+14:25:59,036 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+14:25:59,053 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [org.springframework] to WARN
+14:25:59,053 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@77128536 - Propagating WARN level on Logger[org.springframework] onto the JUL framework
+14:25:59,054 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [bitronix.tm] to WARN
+14:25:59,054 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@77128536 - Propagating WARN level on Logger[bitronix.tm] onto the JUL framework
+14:25:59,054 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [org.hibernate] to WARN
+14:25:59,054 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@77128536 - Propagating WARN level on Logger[org.hibernate] onto the JUL framework
+14:25:59,054 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [org.apache.activemq] to WARN
+14:25:59,054 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@77128536 - Propagating WARN level on Logger[org.apache.activemq] onto the JUL framework
+14:25:59,054 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [ee.homies.gaffer] to DEBUG
+14:25:59,054 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@77128536 - Propagating DEBUG level on Logger[ee.homies.gaffer] onto the JUL framework
+14:25:59,054 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to INFO
+14:25:59,055 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@77128536 - Propagating INFO level on Logger[ROOT] onto the JUL framework
+14:25:59,055 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
+14:25:59,055 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
+14:25:59,056 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@142269f2 - Registering current configuration as safe fallback point
+14:25:59.620 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Registering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accounts'.
+14:25:59.628 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Registering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clients'.
+14:25:59.654 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Registering MBean for 'com.transferwise.common.gaffer:type=TransactionManagerStatistics'.
+14:26:00.720 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Registering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secrets'.
+14:26:00.724 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Registering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=users'.
+14:26:00.746 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Registering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clientsAdmin'.
+14:26:00.749 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Registering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=usersAdmin'.
+14:26:00.752 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Registering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accountsAdmin'.
+14:26:00.755 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Registering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secretsAdmin'.
+14:26:00.956 [Test worker] INFO  c.t.c.g.t.c.ComplexIntTest - testEfficientResourceHandling - 113 ms.
+14:26:01.050 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accounts'.
+14:26:01.056 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clients'.
+14:26:01.108 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secrets'.
+14:26:01.110 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=users'.
+14:26:01.114 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clientsAdmin'.
+14:26:01.116 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=usersAdmin'.
+14:26:01.119 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accountsAdmin'.
+14:26:01.128 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secretsAdmin'.
+14:26:01.196 [Test worker] INFO  c.t.c.g.t.c.ComplexIntTest - testFullCommit - 6 ms.
+14:26:01.263 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accounts'.
+14:26:01.266 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clients'.
+14:26:01.310 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secrets'.
+14:26:01.312 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=users'.
+14:26:01.315 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clientsAdmin'.
+14:26:01.317 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=usersAdmin'.
+14:26:01.319 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accountsAdmin'.
+14:26:01.321 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secretsAdmin'.
+14:26:01.373 [Test worker] INFO  c.t.c.g.t.c.ComplexIntTest - testEfficientResourceHandlingTestingMethod - 10 ms.
+14:26:01.425 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accounts'.
+14:26:01.427 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clients'.
+14:26:01.466 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secrets'.
+14:26:01.468 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=users'.
+14:26:01.472 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clientsAdmin'.
+14:26:01.474 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=usersAdmin'.
+14:26:01.476 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accountsAdmin'.
+14:26:01.478 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secretsAdmin'.
+14:26:01.522 [Test worker] INFO  c.t.c.g.t.c.ComplexIntTest - testLocalTransactionsFullRollback - 6 ms.
+14:26:01.573 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accounts'.
+14:26:01.577 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clients'.
+14:26:01.612 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secrets'.
+14:26:01.614 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=users'.
+14:26:01.617 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clientsAdmin'.
+14:26:01.619 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=usersAdmin'.
+14:26:01.621 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accountsAdmin'.
+14:26:01.622 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secretsAdmin'.
+14:26:05.277 [Test worker] INFO  c.t.c.g.t.c.ComplexIntTest - testParallelWork - 3619 ms.
+14:26:05.315 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accounts'.
+14:26:05.316 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clients'.
+14:26:05.347 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secrets'.
+14:26:05.348 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=users'.
+14:26:05.350 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clientsAdmin'.
+14:26:05.352 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=usersAdmin'.
+14:26:05.353 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accountsAdmin'.
+14:26:05.355 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secretsAdmin'.
+14:26:05.411 [Test worker] ERROR c.t.c.g.t.c.app.ClientsService - client not found
+com.transferwise.common.gaffer.test.complextest1.app.ClientNotFoundException: Client OY Bemmimehed not found 
+	at com.transferwise.common.gaffer.test.complextest1.app.ClientsDao.deleteClient(ClientsDao.java:56)
+	at com.transferwise.common.gaffer.test.complextest1.app.ClientsDao$$FastClassBySpringCGLIB$$6641ac50.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:793)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708)
+	at com.transferwise.common.gaffer.test.complextest1.app.ClientsDao$$EnhancerBySpringCGLIB$$cfca76ac.deleteClient(<generated>)
+	at com.transferwise.common.gaffer.test.complextest1.app.ClientsService.deleteClient(ClientsService.java:44)
+	at com.transferwise.common.gaffer.test.complextest1.app.ClientsService$$FastClassBySpringCGLIB$$faa56073.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:793)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708)
+	at com.transferwise.common.gaffer.test.complextest1.app.ClientsService$$EnhancerBySpringCGLIB$$ed29c0f5.deleteClient(<generated>)
+	at com.transferwise.common.gaffer.test.complextest1.ComplexIntTest.testConnReleasedAfterTxRollback(ComplexIntTest.java:217)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:107)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:88)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:67)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:52)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.processAllTestClasses(JUnitPlatformTestClassProcessor.java:110)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.access$000(JUnitPlatformTestClassProcessor.java:90)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor.stop(JUnitPlatformTestClassProcessor.java:85)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.stop(SuiteTestClassProcessor.java:62)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at jdk.proxy1/jdk.proxy1.$Proxy2.stop(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker$3.run(TestWorker.java:193)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.executeAndMaintainThreadName(TestWorker.java:129)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:100)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:60)
+	at org.gradle.process.internal.worker.child.ActionExecutionWorker.execute(ActionExecutionWorker.java:56)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:113)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:65)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)
+14:26:05.428 [Test worker] INFO  c.t.c.g.t.c.ComplexIntTest - testConnReleasedAfterTxRollback - 47 ms.
+14:26:05.462 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accounts'.
+14:26:05.464 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clients'.
+14:26:05.493 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secrets'.
+14:26:05.494 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=users'.
+14:26:05.496 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clientsAdmin'.
+14:26:05.498 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=usersAdmin'.
+14:26:05.499 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accountsAdmin'.
+14:26:05.500 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secretsAdmin'.
+14:26:05.665 [Test worker] INFO  c.t.c.g.t.c.ComplexIntTest - testFullCommit - 141 ms.
+14:26:05.707 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accounts'.
+14:26:05.709 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clients'.
+14:26:05.737 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secrets'.
+14:26:05.739 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=users'.
+14:26:05.742 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clientsAdmin'.
+14:26:05.743 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=usersAdmin'.
+14:26:05.744 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accountsAdmin'.
+14:26:05.745 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secretsAdmin'.
+14:26:05.774 [Test worker] INFO  c.t.c.g.t.c.ComplexIntTest - testFullRollback - 4 ms.
+14:26:05.807 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accounts'.
+14:26:05.809 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clients'.
+14:26:05.836 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secrets'.
+14:26:05.837 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=users'.
+14:26:05.839 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clientsAdmin'.
+14:26:05.840 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=usersAdmin'.
+14:26:05.841 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=accountsAdmin'.
+14:26:05.843 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=secretsAdmin'.
+14:26:05.868 [Test worker] INFO  c.t.c.g.t.c.ComplexIntTest - testLocalTransactionsFullCommit - 3 ms.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

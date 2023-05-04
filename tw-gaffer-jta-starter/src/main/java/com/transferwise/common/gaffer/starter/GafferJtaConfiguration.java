@@ -2,8 +2,8 @@ package com.transferwise.common.gaffer.starter;
 
 import com.transferwise.common.gaffer.ServiceRegistry;
 import com.transferwise.common.gaffer.ServiceRegistryHolder;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.UserTransaction;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;

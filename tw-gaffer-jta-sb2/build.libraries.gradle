@@ -1,0 +1,33 @@
+ext {
+    springBootVersion = System.getenv("SPRING_BOOT_VERSION") ?: "2.6.14"
+
+    libraries = [
+            // explicit versions
+            guava                           : 'com.google.guava:guava:31.1-jre',
+            spotbugsAnnotations             : "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}",
+            springBootDependencies          : "org.springframework.boot:spring-boot-dependencies:${springBootVersion}",
+            twBaseUtils                     : 'com.transferwise.common:tw-base-utils:1.9.0',
+
+            // versions managed by spring-boot-dependencies platform
+            commonsLang3                    : 'org.apache.commons:commons-lang3',
+            hamcrestCore                    : 'org.hamcrest:hamcrest-core',
+            hibernateCore                   : 'org.hibernate:hibernate-core',
+            hikariCp                        : "com.zaxxer:HikariCP",
+            hsqldb                          : 'org.hsqldb:hsqldb',
+            jakartaAnnotationApi            : 'jakarta.annotation:jakarta.annotation-api',
+            jakartaValidationApi            : 'jakarta.validation:jakarta.validation-api',
+            javaxTransactionApi             : "javax.transaction:javax.transaction-api",
+            lombok                          : 'org.projectlombok:lombok',
+            mariadbJavaClient               : 'org.mariadb.jdbc:mariadb-java-client',
+            slf4jApi                        : 'org.slf4j:slf4j-api',
+            springBootConfigurationProcessor: 'org.springframework.boot:spring-boot-configuration-processor',
+            springContext                   : 'org.springframework:spring-context',
+            springBootStarter               : 'org.springframework.boot:spring-boot-starter',
+            springBootStarterJdbc           : 'org.springframework.boot:spring-boot-starter-jdbc',
+            springBootStarterJpa            : 'org.springframework.boot:spring-boot-starter-data-jpa',
+            springBootStarterTest           : 'org.springframework.boot:spring-boot-starter-test',
+            springBootStarterValidation     : 'org.springframework.boot:spring-boot-starter-validation',
+            springTx                        : 'org.springframework:spring-tx',
+            tomcatJdbc                      : 'org.apache.tomcat:tomcat-jdbc'
+    ]
+}

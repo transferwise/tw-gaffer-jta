@@ -1,12 +1,12 @@
-ext.projectName = "tw-gaffer-jta"
-ext.projectDescription = "tw-gaffer-jta"
-ext.projectArtifactName = "tw-gaffer-jta"
+ext.projectName = "tw-gaffer-jta-sb3"
+ext.projectDescription = "tw-gaffer-jta-sb3"
+ext.projectArtifactName = "tw-gaffer-jta-sb3"
 
 apply from: "${project.rootDir}/build.common.gradle"
 apply from: "${project.rootDir}/build.library.gradle"
 
 dependencies {
-    api libraries.javaxTransactionApi
+    api libraries.jakartaTransactionApi
 
     implementation libraries.slf4jApi
     implementation libraries.commonsLang3

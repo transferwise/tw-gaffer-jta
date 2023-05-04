@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: tw-gaffer-jta-starter-test
+
+tw-gaffer-jta:
+  core:
+    databases:
+      mydb:
+        commitOrder: 15
+        connectionValidationInterval: 31s

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Implementation-Title: tw-gaffer-jta
+Implementation-Version: 2.2.0
+

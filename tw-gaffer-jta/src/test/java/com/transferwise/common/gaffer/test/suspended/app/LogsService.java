@@ -1,6 +1,6 @@
 package com.transferwise.common.gaffer.test.suspended.app;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

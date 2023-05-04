@@ -1,0 +1,47 @@
+import org.eclipse.jgit.api.errors.RefAlreadyExistsException
+
+plugins {
+    id "idea"
+    id 'com.github.spotbugs' version '5.0.13'
+    id 'org.ajoberstar.grgit' version '5.0.0'
+    id 'io.github.gradle-nexus.publish-plugin' version "1.1.0"
+}
+
+ext.projectName = 'TransferWise Gaffer 1PC JTA'
+ext.projectDescription = 'Transferwise Gaffer 1PC JTA - efficient 1PC JTA for enterprise services'
+ext.projectGitHubRepoName = 'tw-gaffer-jta'
+ext.projectArtifactName = 'tw-gaffer-jta'
+
+apply from: 'build.common.gradle'
+
+idea.project {
+    vcs = 'Git'
+    languageLevel = JavaVersion.VERSION_17
+    targetBytecodeVersion = JavaVersion.VERSION_17
+}
+
+task tagRelease {
+    doLast {
+        try {
+            grgit.tag.add {
+                name = "v$version"
+                message = "Release of ${version}"
+            }
+            grgit.push(refsOrSpecs: ["v$version"])
+        }
+        catch (RefAlreadyExistsException ignored) {
+            logger.warn("Tag v$version already exists.")
+        }
+    }
+}
+
+group = 'com.transferwise.common'
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            username = System.getenv("SONATYPE_USER")
+            password = System.getenv("SONATYPE_PASSWORD")
+        }
+    }
+}

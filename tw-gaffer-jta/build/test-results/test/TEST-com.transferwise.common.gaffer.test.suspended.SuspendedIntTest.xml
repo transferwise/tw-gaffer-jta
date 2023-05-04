@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.transferwise.common.gaffer.test.suspended.SuspendedIntTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2023-05-04T13:22:30" hostname="C02FW1AEMD6R" time="0.145">
+  <properties/>
+  <testcase name="testSuccess2()" classname="com.transferwise.common.gaffer.test.suspended.SuspendedIntTest" time="0.134"/>
+  <testcase name="testError()" classname="com.transferwise.common.gaffer.test.suspended.SuspendedIntTest" time="0.005"/>
+  <testcase name="testSuccess()" classname="com.transferwise.common.gaffer.test.suspended.SuspendedIntTest" time="0.004"/>
+  <system-out><![CDATA[14:22:30.913 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Reregistering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=clients'.
+14:22:30.915 [Test worker] INFO  c.t.common.gaffer.util.MBeanUtil - Registering MBean for 'com.transferwise.common.gaffer:type=JdbcDataSource,name=logs'.
+14:22:31.082 [Test worker] INFO  c.t.c.g.t.suspended.app.ClientsDao - Creating client 'Aadus' transactionally.
+14:22:31.083 [Test worker] INFO  c.t.c.g.t.suspended.SuspendedIntTest - Client service invocation finished.
+14:22:31.090 [Test worker] INFO  c.t.c.g.t.suspended.app.ClientsDao - Creating client 'Invalid name' transactionally.
+14:22:31.095 [Test worker] INFO  c.t.c.g.t.suspended.app.ClientsDao - Creating client 'Aadu' transactionally.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

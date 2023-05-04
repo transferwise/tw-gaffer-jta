@@ -1,0 +1,5 @@
+rootProject.name = 'tw-gaffer-jta'
+
+include 'tw-gaffer-jta'
+include 'tw-gaffer-jta-starter'
+
