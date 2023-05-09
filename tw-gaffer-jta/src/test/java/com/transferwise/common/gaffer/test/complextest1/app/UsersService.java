@@ -1,6 +1,6 @@
 package com.transferwise.common.gaffer.test.complextest1.app;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

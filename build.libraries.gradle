@@ -1,22 +1,22 @@
 ext {
-    springBootVersion = System.getenv("SPRING_BOOT_VERSION") ?: "2.6.14"
+    springBootVersion = System.getenv("SPRING_BOOT_VERSION") ?: "3.0.6"
 
     libraries = [
             // explicit versions
             guava                           : 'com.google.guava:guava:31.1-jre',
             spotbugsAnnotations             : "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}",
             springBootDependencies          : "org.springframework.boot:spring-boot-dependencies:${springBootVersion}",
-            twBaseUtils                     : 'com.transferwise.common:tw-base-utils:1.9.0',
+            twBaseUtils                     : 'com.transferwise.common:tw-base-utils:1.10.1',
 
             // versions managed by spring-boot-dependencies platform
             commonsLang3                    : 'org.apache.commons:commons-lang3',
             hamcrestCore                    : 'org.hamcrest:hamcrest-core',
-            hibernateCore                   : 'org.hibernate:hibernate-core',
+            hibernateCore                   : 'org.hibernate.orm:hibernate-core',
             hikariCp                        : "com.zaxxer:HikariCP",
             hsqldb                          : 'org.hsqldb:hsqldb',
             jakartaAnnotationApi            : 'jakarta.annotation:jakarta.annotation-api',
             jakartaValidationApi            : 'jakarta.validation:jakarta.validation-api',
-            javaxTransactionApi             : "javax.transaction:javax.transaction-api",
+            jakartaTransactionApi           : "jakarta.transaction:jakarta.transaction-api",
             lombok                          : 'org.projectlombok:lombok',
             mariadbJavaClient               : 'org.mariadb.jdbc:mariadb-java-client',
             slf4jApi                        : 'org.slf4j:slf4j-api',

@@ -2,12 +2,12 @@ package com.transferwise.common.gaffer;
 
 import com.transferwise.common.gaffer.util.ExceptionThrower;
 import com.transferwise.common.gaffer.util.FormatLogger;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 
 public class TransactionManagerImpl implements TransactionManager {
 

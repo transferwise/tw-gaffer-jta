@@ -1,6 +1,6 @@
 package com.transferwise.common.gaffer.util;
 
-import javax.transaction.Status;
+import jakarta.transaction.Status;
 
 public class TransactionStatuses {
 

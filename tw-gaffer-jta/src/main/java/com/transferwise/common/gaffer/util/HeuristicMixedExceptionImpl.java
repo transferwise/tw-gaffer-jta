@@ -1,6 +1,6 @@
 package com.transferwise.common.gaffer.util;
 
-import javax.transaction.RollbackException;
+import jakarta.transaction.RollbackException;
 
 public class HeuristicMixedExceptionImpl extends RollbackException {
 

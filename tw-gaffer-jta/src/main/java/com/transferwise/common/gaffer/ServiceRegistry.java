@@ -2,7 +2,7 @@ package com.transferwise.common.gaffer;
 
 import com.transferwise.common.gaffer.util.Clock;
 import com.transferwise.common.gaffer.util.MonotonicClock;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 public class ServiceRegistry {
 

@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2023-05-06
+
+### Changed
+
+* Moving from `javax` packages to `jakarta`.
+  That means we will start supporting JDK 17 and Spring Boot 3 only from now on.
+  Cloned `javax` version to `transferwise/tw-gaffer-jta-javax` repository, for case we need to do urgent changes for older services.
+
+* Jakarta Validation is done now programmatically.
+  Somehow the `@Validated` annotation based validation considerable slowed down the application startup.
+
 ## [2.2.0] - 2023-03-30
 
 ### Changed

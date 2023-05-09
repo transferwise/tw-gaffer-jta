@@ -44,8 +44,8 @@ configurations {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withSourcesJar()
     withJavadocJar()
 }
@@ -60,9 +60,14 @@ jar {
 }
 
 dependencies {
-    local platform(libraries.springBootDependencies + '!!')
-    local libraries.lombok
-    local libraries.spotbugsAnnotations
+    local platform(libraries.springBootDependencies)
+
+    compileOnly libraries.lombok
+    annotationProcessor libraries.lombok
+    testCompileOnly libraries.lombok
+    testAnnotationProcessor libraries.lombok
+
+    compileOnly libraries.spotbugsAnnotations
 }
 
 compileJava {
@@ -73,19 +78,9 @@ compileJava {
 
     options.fork = true
     options.forkOptions.jvmArgs << '-Xmx256m'
-
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(11)
-    }
 }
 
 compileTestJava {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-
     options.fork = true
     options.forkOptions.jvmArgs << '-Xmx256m'
 }
@@ -117,9 +112,6 @@ jar {
 }
 
 test {
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
     useJUnitPlatform()
     jvmArgs("-Xmx512m")
     testLogging {
