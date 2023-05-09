@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   That means we will start supporting JDK 17 and Spring Boot 3 only from now on.
   Cloned `javax` version to `transferwise/tw-gaffer-jta-javax` repository, for case we need to do urgent changes for older services.
 
+* Jakarta Validation is done now programmatically.
+  Somehow the `@Validated` annotation based validation considerable slowed down the application startup.
+
 ## [2.2.0] - 2023-03-30
 
 ### Changed
