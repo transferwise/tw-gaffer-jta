@@ -60,9 +60,14 @@ jar {
 }
 
 dependencies {
-    local platform(libraries.springBootDependencies + '!!')
-    local libraries.lombok
-    local libraries.spotbugsAnnotations
+    local platform(libraries.springBootDependencies)
+
+    compileOnly libraries.lombok
+    annotationProcessor libraries.lombok
+    testCompileOnly libraries.lombok
+    testAnnotationProcessor libraries.lombok
+
+    compileOnly libraries.spotbugsAnnotations
 }
 
 compileJava {

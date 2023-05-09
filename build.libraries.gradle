@@ -3,7 +3,6 @@ ext {
 
     libraries = [
             // explicit versions
-            hibernateCoreJakarta            : 'org.hibernate:hibernate-core-jakarta:5.6.15.Final',
             guava                           : 'com.google.guava:guava:31.1-jre',
             spotbugsAnnotations             : "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}",
             springBootDependencies          : "org.springframework.boot:spring-boot-dependencies:${springBootVersion}",
@@ -12,6 +11,7 @@ ext {
             // versions managed by spring-boot-dependencies platform
             commonsLang3                    : 'org.apache.commons:commons-lang3',
             hamcrestCore                    : 'org.hamcrest:hamcrest-core',
+            hibernateCore                   : 'org.hibernate.orm:hibernate-core',
             hikariCp                        : "com.zaxxer:HikariCP",
             hsqldb                          : 'org.hsqldb:hsqldb',
             jakartaAnnotationApi            : 'jakarta.annotation:jakarta.annotation-api',

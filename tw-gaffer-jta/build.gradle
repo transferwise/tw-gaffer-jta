@@ -19,7 +19,7 @@ dependencies {
     testImplementation libraries.hamcrestCore
     testImplementation libraries.tomcatJdbc
     testImplementation libraries.guava
-    testImplementation libraries.hibernateCoreJakarta
+    testImplementation libraries.hibernateCore
     testImplementation libraries.springBootStarterJpa
 
     testRuntimeOnly libraries.hsqldb
