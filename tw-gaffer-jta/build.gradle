@@ -1,12 +1,12 @@
 ext.projectName = "tw-gaffer-jta"
 ext.projectDescription = "tw-gaffer-jta"
-ext.projectArtifactName = "tw-gaffer-jta"
+ext.projectArtifactName = "tw-gaffer-jta-jakarta"
 
 apply from: "${project.rootDir}/build.common.gradle"
 apply from: "${project.rootDir}/build.library.gradle"
 
 dependencies {
-    api libraries.javaxTransactionApi
+    api libraries.jakartaTransactionApi
 
     implementation libraries.slf4jApi
     implementation libraries.commonsLang3
@@ -19,7 +19,7 @@ dependencies {
     testImplementation libraries.hamcrestCore
     testImplementation libraries.tomcatJdbc
     testImplementation libraries.guava
-    testImplementation libraries.hibernateCore
+    testImplementation libraries.hibernateCoreJakarta
     testImplementation libraries.springBootStarterJpa
 
     testRuntimeOnly libraries.hsqldb

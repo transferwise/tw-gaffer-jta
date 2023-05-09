@@ -1,12 +1,12 @@
 ext.projectName = "tw-gaffer-jta-starter"
 ext.projectDescription = "tw-gaffer-jta-starter"
-ext.projectArtifactName = "tw-gaffer-jta-starter"
+ext.projectArtifactName = "tw-gaffer-jta-jakarta-starter"
 
 apply from: "${project.rootDir}/build.common.gradle"
 apply from: "${project.rootDir}/build.library.gradle"
 
 dependencies {
-    api libraries.javaxTransactionApi
+    api libraries.jakartaTransactionApi
     api project(":tw-gaffer-jta")
 
     annotationProcessor libraries.springBootConfigurationProcessor

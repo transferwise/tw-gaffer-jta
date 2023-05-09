@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import com.transferwise.common.gaffer.test.suspended.app.ClientsService;
 import com.transferwise.common.gaffer.test.suspended.app.DatabasesManager;
 import com.transferwise.common.gaffer.util.FormatLogger;
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

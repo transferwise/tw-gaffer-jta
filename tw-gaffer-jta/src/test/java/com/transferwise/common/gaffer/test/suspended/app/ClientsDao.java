@@ -1,7 +1,7 @@
 package com.transferwise.common.gaffer.test.suspended.app;
 
 import com.transferwise.common.gaffer.util.FormatLogger;
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

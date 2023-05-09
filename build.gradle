@@ -2,15 +2,15 @@ import org.eclipse.jgit.api.errors.RefAlreadyExistsException
 
 plugins {
     id "idea"
-    id 'com.github.spotbugs' version '5.0.13'
-    id 'org.ajoberstar.grgit' version '5.0.0'
+    id 'com.github.spotbugs' version '5.0.14'
+    id 'org.ajoberstar.grgit' version '5.2.0'
     id 'io.github.gradle-nexus.publish-plugin' version "1.1.0"
 }
 
 ext.projectName = 'TransferWise Gaffer 1PC JTA'
 ext.projectDescription = 'Transferwise Gaffer 1PC JTA - efficient 1PC JTA for enterprise services'
 ext.projectGitHubRepoName = 'tw-gaffer-jta'
-ext.projectArtifactName = 'tw-gaffer-jta'
+ext.projectArtifactName = 'tw-gaffer-jta-jakarta'
 
 apply from: 'build.common.gradle'
 

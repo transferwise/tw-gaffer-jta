@@ -1,10 +1,10 @@
 package com.transferwise.common.gaffer;
 
 import com.transferwise.common.gaffer.util.ExceptionThrower;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 public class TransactionSynchronizationRegistryImpl implements TransactionSynchronizationRegistry {
 
