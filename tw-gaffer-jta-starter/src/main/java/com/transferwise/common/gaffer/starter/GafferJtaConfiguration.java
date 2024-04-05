@@ -49,7 +49,7 @@ public class GafferJtaConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public GafferJtaDataSourceBeanProcessor gafferJtaDataSourceBeanProcessor() {
+  public static GafferJtaDataSourceBeanProcessor gafferJtaDataSourceBeanProcessor() {
     return new GafferJtaDataSourceBeanProcessor();
   }
 
