@@ -50,7 +50,7 @@ public class TransactionImpl implements Transaction {
     exceptionThrower = new ExceptionThrower(serviceRegistry.getConfiguration().isLogExceptions());
 
     abandonedTransactionsTracker = new AbandonedTransactionsTracker(getTransactionManagerStatistics(), globalTransactionId, status);
-    cleaner.register(this, abandonedTransactionsTracker);
+    //cleaner.register(this, abandonedTransactionsTracker);
   }
 
   public void setSuspended(boolean suspended) {
