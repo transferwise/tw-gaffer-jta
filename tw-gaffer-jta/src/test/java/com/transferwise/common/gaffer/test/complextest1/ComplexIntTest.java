@@ -4,9 +4,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import com.transferwise.common.gaffer.jdbc.GafferJtaDataSource;
+import com.transferwise.common.gaffer.test.MetricsTestHelper;
 import com.transferwise.common.gaffer.test.complextest1.app.ClientsService;
 import com.transferwise.common.gaffer.test.complextest1.app.Config;
 import com.transferwise.common.gaffer.test.complextest1.app.DatabasesManager;
+import com.transferwise.common.gaffer.test.complextest1.app.TestApplication;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 
 class ComplexIntTest {
@@ -31,7 +33,7 @@ class ComplexIntTest {
   protected static final String TABLE_USERS = "users.users";
   protected static final String TABLE_CLIENTS = "clients.clients";
 
-  protected ClassPathXmlApplicationContext appCtxt;
+  protected AnnotationConfigApplicationContext appCtxt;
 
   @BeforeEach
   public void setUpProperties() {
@@ -40,7 +42,7 @@ class ComplexIntTest {
   }
 
   protected void setUp() {
-    appCtxt = new ClassPathXmlApplicationContext("/com/transferwise/common/gaffer/test/complextest1/app/applicationContext.xml");
+    appCtxt = new AnnotationConfigApplicationContext(TestApplication.class);
   }
 
   @AfterEach
@@ -225,8 +227,8 @@ class ComplexIntTest {
       log.debug(e.getMessage(), e);
     }
 
-    assertThat(getAccountDataSource().getAllConnectionGetsCount(), equalTo(1L));
-    assertThat(getAccountDataSource().getClosedConnectionsCount(), equalTo(1L));
+    assertThat(getMth().getCount("gaffer.connection.get", ""),equalTo(1d));
+    assertThat(getMth().getCount("gaffer.connection.close", ""),equalTo(1d));
   }
 
   protected int getTableCount(String tableName) {
@@ -243,6 +245,10 @@ class ComplexIntTest {
 
   GafferJtaDataSource getAccountDataSource() {
     return ((GafferJtaDataSource) appCtxt.getBean("accountsDataSource"));
+  }
+
+  protected MetricsTestHelper getMth(){
+    return appCtxt.getBean(MetricsTestHelper.class);
   }
 
   protected static class Stat {

@@ -1,8 +1,9 @@
 package com.transferwise.common.gaffer.util;
 
-public class ExceptionThrower {
+import lombok.extern.slf4j.Slf4j;
 
-  private static final FormatLogger log = new FormatLogger(ExceptionThrower.class);
+@Slf4j
+public class ExceptionThrower {
 
   private final boolean logExceptions;
 

@@ -8,6 +8,7 @@ import java.sql.Connection;
 import javax.sql.DataSource;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Import;
  */
 @SpringBootApplication
 @Import(TransactionsConfiguration.class)
+@AutoConfigureObservability
 public class TestApplication {
 
   // We create our own mock data source, because hsqldb does not support setting read only flag and isolation level correctly.

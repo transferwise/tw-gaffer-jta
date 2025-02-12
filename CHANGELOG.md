@@ -5,7 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0]
+
+### Changed
+
+* Refactored the classes and initialisation setup away from static classes.
+
+* Made abandoned transactions tracking configurable.
+
+* Migrated from JMX to Micrometer.
+
+### Migration guide
+
+* If you used custom Spring configuration, it is
+
 ## [3.2.0]
+
+### Changed
 
 * Disabling abandoned transactions tracker.
 
@@ -72,7 +88,7 @@ If you were using hardcoded `gafferJtaJtaTransactionManager` bean name in your s
 
 ### Added
 
-* Spring Boot auto configuration module `tw-gaffer-jta-starter`.
+* Spring Boot auto gafferConfig module `tw-gaffer-jta-starter`.
 
 ### Changed
 
@@ -89,13 +105,13 @@ For that
 
 1. Make sure, that all your data sources are exposed as beans.
    If this is not possible, you still need to wrap those data sources into `GafferJtaDataSource`, manually.
-2. Remove `tw-gaffer-jta` from `implementation` configuration.
+2. Remove `tw-gaffer-jta` from `implementation` gafferConfig.
    Unless, you would need manual wrapping of `GafferJtaDataSource`.
 3. Remove custom wrappings of `GafferJtaDataSource` / `DataSourceImpl`.
    In Wise context, your data source beans should be just plain `HikariDataSource` instances.
 4. Remove the code creating all the beans now defined in the `GafferJtaConfiguration` class.
    In a typical Wise service, it comes down to deleting the whole `TransactionManagerConfiguration` class.
-5. Add `tw-gaffer-jta` into `runtimeOnly` configuration.
+5. Add `tw-gaffer-jta` into `runtimeOnly` gafferConfig.
 
 #### Without Auto Configuration
 

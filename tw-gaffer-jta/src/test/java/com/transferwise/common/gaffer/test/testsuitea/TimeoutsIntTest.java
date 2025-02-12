@@ -3,9 +3,8 @@ package com.transferwise.common.gaffer.test.testsuitea;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-import com.transferwise.common.gaffer.ServiceRegistryHolder;
-import com.transferwise.common.gaffer.TestUtils;
-import com.transferwise.common.gaffer.TransactionImpl;
+import com.transferwise.common.gaffer.DefaultGafferTransactionManager;
+import com.transferwise.common.gaffer.GafferTransaction;
 import com.transferwise.common.gaffer.test.TestClock;
 import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @BaseTestEnvironment
 @TestInstance(Lifecycle.PER_CLASS)
-class TimeoutsIntTest {
+public class TimeoutsIntTest {
 
   @Autowired
   private ApplicationContext applicationContext;
@@ -26,10 +25,12 @@ class TimeoutsIntTest {
   @Autowired
   private TestClock testClock;
 
+  @Autowired
+  private DefaultGafferTransactionManager transactionManager;
+
   @BeforeEach
   void beforeEach() {
     getSelf().testClock = testClock;
-    TestUtils.setClock(testClock);
   }
 
   @Test
@@ -43,15 +44,14 @@ class TimeoutsIntTest {
 
   @Transactional(timeout = 1)
   public void doSomethingWithTimeout() {
-    assertThat(ServiceRegistryHolder.getServiceRegistry().getTransactionManager().getTransactionTimeout(), equalTo(1));
+    assertThat(transactionManager.getTransactionTimeout(), equalTo(1));
   }
 
   @Transactional
   public void doSomethingWithoutTimeout() {
-    var transactionManager = ServiceRegistryHolder.getServiceRegistry().getTransactionManager();
     assertThat(transactionManager.getTransactionTimeout(), equalTo(0));
 
-    var transaction = (TransactionImpl) transactionManager.getTransaction();
+    var transaction = (GafferTransaction) transactionManager.getTransaction();
     testClock.tick(Duration.ofMillis(2));
 
     // Timeout of 0 means there is no timeout.

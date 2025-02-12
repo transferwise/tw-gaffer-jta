@@ -32,11 +32,6 @@ public class UidImpl implements Uid {
   }
 
   @Override
-  public int getSequence() {
-    return sequence;
-  }
-
-  @Override
   public String getInstanceId() {
     return instanceId;
   }

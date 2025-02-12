@@ -1,4 +1,4 @@
-package com.transferwise.common.gaffer.starter;
+package com.transferwise.common.gaffer;
 
 import com.transferwise.common.gaffer.jdbc.AutoCommitStrategy;
 import jakarta.validation.Valid;
@@ -13,11 +13,32 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class GafferJtaProperties {
 
-  @Valid
-  private Map<String, DatabaseProperties> databases = new ConcurrentHashMap<>();
-
+  /**
+   * Specifies transaction length, after which we will "ping" connections, before starting the commit routine.
+   */
   @NotNull
   private Duration beforeCommitValidationRequiredTime = Duration.ofSeconds(15);
+
+  /**
+   * Used to validate if Gaffer integrates correctly to a specific framework.
+   *
+   * <p>Use Java's single-threaded Cleaner subsystem, so be careful if you have exceptionally large number of transactions.
+   */
+  private boolean trackAbandonedTransactions = false;
+
+  /**
+   * Used in UUID generation.
+   */
+  private String instanceId = "Gaffer";
+
+  /**
+   * Sometimes calling API like Spring will not show any exceptions during rollbacks and commits, so logging those out in gaffer can be necessary.
+   */
+  private boolean logExceptions = false;
+
+
+  @Valid
+  private Map<String, DatabaseProperties> databases = new ConcurrentHashMap<>();
 
   @Data
   @Accessors(chain = true)

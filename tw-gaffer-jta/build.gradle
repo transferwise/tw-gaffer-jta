@@ -11,16 +11,19 @@ dependencies {
     implementation libraries.slf4jApi
     implementation libraries.commonsLang3
     implementation libraries.jakartaAnnotationApi
+    implementation libraries.jakartaValidationApi
+    implementation libraries.micrometerCore
     implementation libraries.twBaseUtils
 
-    testImplementation libraries.springContext
-    testImplementation libraries.springBootStarterTest
-    testImplementation libraries.springBootStarterJdbc
-    testImplementation libraries.hamcrestCore
-    testImplementation libraries.tomcatJdbc
     testImplementation libraries.guava
     testImplementation libraries.hibernateCore
-    testImplementation libraries.springBootStarterJpa
+    testImplementation libraries.hamcrestCore
+    testImplementation libraries.springBootStarterTest
+    testImplementation libraries.springBootStarterJdbc
+    testImplementation libraries.springContext
+    testImplementation libraries.springOrm
+    testImplementation libraries.tomcatJdbc
 
     testRuntimeOnly libraries.hsqldb
+    testRuntimeOnly libraries.springBootStarterActuator
 }

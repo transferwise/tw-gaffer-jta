@@ -14,11 +14,9 @@
     </appender>
 
     <logger name="org.springframework" level="warn"/>
-    <logger name="bitronix.tm" level="warn"/>
     <logger name="org.hibernate" level="warn"/>
-    <logger name="org.apache.activemq" level="warn"/>
 
-    <logger name="ee.homies.gaffer" level="debug"/>
+    <logger name="com.transferwise.common.gaffer" level="debug"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>

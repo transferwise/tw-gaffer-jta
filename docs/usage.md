@@ -24,7 +24,7 @@ dependencies {
 4. If you need to configure the Gaffer datasource's, you can do so using the `GafferJtaProperties` class*.
 
 \* You can do this in two ways:
-1. Create a configuration entry in your `application.yml`, which will then cause the bean to be automatically created. For example:
+1. Create a gafferConfig entry in your `application.yml`, which will then cause the bean to be automatically created. For example:
 ```yaml
 tw-gaffer-jta:
   core:

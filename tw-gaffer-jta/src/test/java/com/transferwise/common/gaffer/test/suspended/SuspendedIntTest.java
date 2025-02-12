@@ -3,25 +3,32 @@ package com.transferwise.common.gaffer.test.suspended;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import com.transferwise.common.gaffer.test.BaseExtension;
+import com.transferwise.common.gaffer.test.MetricsTestHelper;
 import com.transferwise.common.gaffer.test.suspended.app.ClientsService;
 import com.transferwise.common.gaffer.test.suspended.app.DatabasesManager;
-import com.transferwise.common.gaffer.util.FormatLogger;
+import com.transferwise.common.gaffer.test.suspended.app.TestApplication;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.Resource;
 import javax.sql.DataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.UnexpectedRollbackException;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:/com/transferwise/common/gaffer/test/suspended/applicationContext.xml"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Slf4j
+@ActiveProfiles(profiles = {"integration"})
+@ExtendWith(BaseExtension.class)
+@SpringBootTest(classes = {TestApplication.class})
+@TestInstance(Lifecycle.PER_CLASS)
 class SuspendedIntTest {
 
-  private static final FormatLogger log = new FormatLogger(SuspendedIntTest.class);
   @Resource(name = "clientsService")
   private ClientsService clientsService;
 
@@ -34,9 +41,13 @@ class SuspendedIntTest {
   @Resource(name = "logsInnerDataSource")
   private DataSource logsInnerDataSource;
 
+  @Autowired
+  private MetricsTestHelper mth;
+
   @BeforeEach
-  public void afterTest() {
+  public void beforeEach() {
     databasesManager.deleteRows();
+    mth.cleanup();
   }
 
   @Test
@@ -48,6 +59,33 @@ class SuspendedIntTest {
     assertThat(databasesManager.getTableRowsCount("logs.logs"), equalTo(1));
     assertThat(((org.apache.tomcat.jdbc.pool.DataSource) clientsInnerDataSource).getNumActive(), equalTo(0));
     assertThat(((org.apache.tomcat.jdbc.pool.DataSource) logsInnerDataSource).getNumActive(), equalTo(0));
+
+    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=clients),tag(transactional=true)]"),equalTo(1d));
+
+    // Queries for test assertions
+    assertThat(mth.getCount("gaffer.connection.get", "tags=[tag(dataSource=logs),tag(transactional=false)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.get", "tags=[tag(dataSource=clients),tag(transactional=false)]"),equalTo(1d));
+
+    assertThat(mth.getCount("gaffer.connection.close", "[tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.close", "[tag(dataSource=clients),tag(transactional=true)]"),equalTo(1d));
+
+    // Queries for test assertions
+    assertThat(mth.getCount("gaffer.connection.close", "tags=[tag(dataSource=logs),tag(transactional=false)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.close", "tags=[tag(dataSource=clients),tag(transactional=false)]"),equalTo(1d));
+
+    assertThat(mth.getCount("gaffer.transaction.resume", "tags=[]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.transaction.suspend", "tags=[]"),equalTo(1d));
+
+    assertThat(mth.getCount("gaffer.connection.autocommit.switch", "tags=[tag(atAcquire=true),tag(autoCommit=false),tag(dataSource=clients),tag(transactional=true)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.autocommit.switch", "tags=[tag(atAcquire=true),tag(autoCommit=false),tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
+
+    assertThat(mth.getCount("gaffer.transaction.begin", "tags=[]"),equalTo(2d));
+    assertThat(mth.getCount("gaffer.transaction.commit", "tags=[tag(suspended=false)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.transaction.commit", "tags=[tag(suspended=true)]"),equalTo(1d));
+
+    assertThat(mth.getGaugeValue("gaffer.transactions.suspended", -1d, ""),equalTo(0d));
+    assertThat(mth.getGaugeValue("gaffer.transactions.active", -1d, ""),equalTo(0d));
   }
 
   @Test
@@ -67,5 +105,22 @@ class SuspendedIntTest {
     assertThat(wasRollback, equalTo(true));
     assertThat(databasesManager.getTableRowsCount("clients.clients"), equalTo(0));
     assertThat(databasesManager.getTableRowsCount("logs.logs"), equalTo(1));
+
+    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=clients),tag(transactional=true)]"),equalTo(0d));
+
+    assertThat(mth.getCount("gaffer.connection.close", "[tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
+
+    assertThat(mth.getCount("gaffer.transaction.resume", "tags=[]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.transaction.suspend", "tags=[]"),equalTo(1d));
+
+    assertThat(mth.getCount("gaffer.connection.autocommit.switch", "tags=[tag(atAcquire=true),tag(autoCommit=false),tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
+
+    assertThat(mth.getCount("gaffer.transaction.begin", "tags=[]"),equalTo(2d));
+
+    // Empty commit
+    assertThat(mth.getCount("gaffer.transaction.commit", "tags=[tag(suspended=false)]"),equalTo(1d));
+
+    assertThat(mth.getCount("gaffer.transaction.rollback", "tags=[tag(suspended=true)]"),equalTo(1d));
   }
 }
