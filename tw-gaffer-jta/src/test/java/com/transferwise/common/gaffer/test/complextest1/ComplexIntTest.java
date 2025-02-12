@@ -227,8 +227,8 @@ class ComplexIntTest {
       log.debug(e.getMessage(), e);
     }
 
-    assertThat(getMth().getCount("gaffer.connection.get", ""),equalTo(1d));
-    assertThat(getMth().getCount("gaffer.connection.close", ""),equalTo(1d));
+    assertThat(getMth().getCount("gaffer.connection.get", ""), equalTo(1d));
+    assertThat(getMth().getCount("gaffer.connection.close", ""), equalTo(1d));
   }
 
   protected int getTableCount(String tableName) {
@@ -247,7 +247,7 @@ class ComplexIntTest {
     return ((GafferJtaDataSource) appCtxt.getBean("accountsDataSource"));
   }
 
-  protected MetricsTestHelper getMth(){
+  protected MetricsTestHelper getMth() {
     return appCtxt.getBean(MetricsTestHelper.class);
   }
 
