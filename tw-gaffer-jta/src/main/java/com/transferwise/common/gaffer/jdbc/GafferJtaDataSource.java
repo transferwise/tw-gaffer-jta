@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class GafferJtaDataSource extends DataSourceWrapper {
 
-  private static AtomicLong idSequence = new AtomicLong();
+  private static final AtomicLong idSequence = new AtomicLong();
 
   @Getter
   @Setter
@@ -46,7 +46,6 @@ public class GafferJtaDataSource extends DataSourceWrapper {
 
   private final GafferTransactionManager gafferTransactionManager;
 
-  private String id;
   private String connectionResourceKey;
   private Tag dataSourceTag;
 
@@ -71,7 +70,7 @@ public class GafferJtaDataSource extends DataSourceWrapper {
           if (StringUtils.isEmpty(uniqueName)) {
             throw new IllegalStateException("Unique name is not set.");
           }
-          id = GafferJtaDataSource.class + "." + idSequence.incrementAndGet();
+          var id = GafferJtaDataSource.class + "." + idSequence.incrementAndGet();
           connectionResourceKey = id + ".con";
           this.dataSourceTag = gafferTransactionManager.getMetricsTemplate().createDataSourceNameTag(uniqueName);
         }

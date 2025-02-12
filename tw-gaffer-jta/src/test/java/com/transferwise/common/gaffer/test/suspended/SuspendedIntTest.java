@@ -8,7 +8,6 @@ import com.transferwise.common.gaffer.test.MetricsTestHelper;
 import com.transferwise.common.gaffer.test.suspended.app.ClientsService;
 import com.transferwise.common.gaffer.test.suspended.app.DatabasesManager;
 import com.transferwise.common.gaffer.test.suspended.app.TestApplication;
-import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -60,32 +59,34 @@ class SuspendedIntTest {
     assertThat(((org.apache.tomcat.jdbc.pool.DataSource) clientsInnerDataSource).getNumActive(), equalTo(0));
     assertThat(((org.apache.tomcat.jdbc.pool.DataSource) logsInnerDataSource).getNumActive(), equalTo(0));
 
-    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
-    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=clients),tag(transactional=true)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=logs),tag(transactional=true)]"), equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=clients),tag(transactional=true)]"), equalTo(1d));
 
     // Queries for test assertions
-    assertThat(mth.getCount("gaffer.connection.get", "tags=[tag(dataSource=logs),tag(transactional=false)]"),equalTo(1d));
-    assertThat(mth.getCount("gaffer.connection.get", "tags=[tag(dataSource=clients),tag(transactional=false)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.get", "tags=[tag(dataSource=logs),tag(transactional=false)]"), equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.get", "tags=[tag(dataSource=clients),tag(transactional=false)]"), equalTo(1d));
 
-    assertThat(mth.getCount("gaffer.connection.close", "[tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
-    assertThat(mth.getCount("gaffer.connection.close", "[tag(dataSource=clients),tag(transactional=true)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.close", "[tag(dataSource=logs),tag(transactional=true)]"), equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.close", "[tag(dataSource=clients),tag(transactional=true)]"), equalTo(1d));
 
     // Queries for test assertions
-    assertThat(mth.getCount("gaffer.connection.close", "tags=[tag(dataSource=logs),tag(transactional=false)]"),equalTo(1d));
-    assertThat(mth.getCount("gaffer.connection.close", "tags=[tag(dataSource=clients),tag(transactional=false)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.close", "tags=[tag(dataSource=logs),tag(transactional=false)]"), equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.close", "tags=[tag(dataSource=clients),tag(transactional=false)]"), equalTo(1d));
 
-    assertThat(mth.getCount("gaffer.transaction.resume", "tags=[]"),equalTo(1d));
-    assertThat(mth.getCount("gaffer.transaction.suspend", "tags=[]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.transaction.resume", "tags=[]"), equalTo(1d));
+    assertThat(mth.getCount("gaffer.transaction.suspend", "tags=[]"), equalTo(1d));
 
-    assertThat(mth.getCount("gaffer.connection.autocommit.switch", "tags=[tag(atAcquire=true),tag(autoCommit=false),tag(dataSource=clients),tag(transactional=true)]"),equalTo(1d));
-    assertThat(mth.getCount("gaffer.connection.autocommit.switch", "tags=[tag(atAcquire=true),tag(autoCommit=false),tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.autocommit.switch",
+        "tags=[tag(atAcquire=true),tag(autoCommit=false),tag(dataSource=clients),tag(transactional=true)]"), equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.autocommit.switch",
+        "tags=[tag(atAcquire=true),tag(autoCommit=false),tag(dataSource=logs),tag(transactional=true)]"), equalTo(1d));
 
-    assertThat(mth.getCount("gaffer.transaction.begin", "tags=[]"),equalTo(2d));
-    assertThat(mth.getCount("gaffer.transaction.commit", "tags=[tag(suspended=false)]"),equalTo(1d));
-    assertThat(mth.getCount("gaffer.transaction.commit", "tags=[tag(suspended=true)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.transaction.begin", "tags=[]"), equalTo(2d));
+    assertThat(mth.getCount("gaffer.transaction.commit", "tags=[tag(suspended=false)]"), equalTo(1d));
+    assertThat(mth.getCount("gaffer.transaction.commit", "tags=[tag(suspended=true)]"), equalTo(1d));
 
-    assertThat(mth.getGaugeValue("gaffer.transactions.suspended", -1d, ""),equalTo(0d));
-    assertThat(mth.getGaugeValue("gaffer.transactions.active", -1d, ""),equalTo(0d));
+    assertThat(mth.getGaugeValue("gaffer.transactions.suspended", -1d, ""), equalTo(0d));
+    assertThat(mth.getGaugeValue("gaffer.transactions.active", -1d, ""), equalTo(0d));
   }
 
   @Test
@@ -106,21 +107,22 @@ class SuspendedIntTest {
     assertThat(databasesManager.getTableRowsCount("clients.clients"), equalTo(0));
     assertThat(databasesManager.getTableRowsCount("logs.logs"), equalTo(1));
 
-    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
-    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=clients),tag(transactional=true)]"),equalTo(0d));
+    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=logs),tag(transactional=true)]"), equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.get", "[tag(dataSource=clients),tag(transactional=true)]"), equalTo(0d));
 
-    assertThat(mth.getCount("gaffer.connection.close", "[tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.close", "[tag(dataSource=logs),tag(transactional=true)]"), equalTo(1d));
 
-    assertThat(mth.getCount("gaffer.transaction.resume", "tags=[]"),equalTo(1d));
-    assertThat(mth.getCount("gaffer.transaction.suspend", "tags=[]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.transaction.resume", "tags=[]"), equalTo(1d));
+    assertThat(mth.getCount("gaffer.transaction.suspend", "tags=[]"), equalTo(1d));
 
-    assertThat(mth.getCount("gaffer.connection.autocommit.switch", "tags=[tag(atAcquire=true),tag(autoCommit=false),tag(dataSource=logs),tag(transactional=true)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.connection.autocommit.switch",
+        "tags=[tag(atAcquire=true),tag(autoCommit=false),tag(dataSource=logs),tag(transactional=true)]"), equalTo(1d));
 
-    assertThat(mth.getCount("gaffer.transaction.begin", "tags=[]"),equalTo(2d));
+    assertThat(mth.getCount("gaffer.transaction.begin", "tags=[]"), equalTo(2d));
 
     // Empty commit
-    assertThat(mth.getCount("gaffer.transaction.commit", "tags=[tag(suspended=false)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.transaction.commit", "tags=[tag(suspended=false)]"), equalTo(1d));
 
-    assertThat(mth.getCount("gaffer.transaction.rollback", "tags=[tag(suspended=true)]"),equalTo(1d));
+    assertThat(mth.getCount("gaffer.transaction.rollback", "tags=[tag(suspended=true)]"), equalTo(1d));
   }
 }

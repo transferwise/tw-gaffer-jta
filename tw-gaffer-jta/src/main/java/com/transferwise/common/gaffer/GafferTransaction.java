@@ -21,21 +21,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class GafferTransaction implements Transaction {
 
-  private static Cleaner cleaner = Cleaner.create();
-
   private int status = Status.STATUS_NO_TRANSACTION;
+  @Getter
   private final Uid globalTransactionId;
   private final List<XAResource> xaResources = new CopyOnWriteArrayList<>();
   private final List<Synchronization> synchronizations = new CopyOnWriteArrayList<>();
   private final List<Synchronization> interposedSynchronizations = new CopyOnWriteArrayList<>();
   private final Map<Object, Object> resources = new ConcurrentHashMap<>();
+  @Getter
   private final long startTimeMillis;
   private long beforeCommitValidationRequiredTimeMs = -1;
+  @Setter
+  @Getter
   private long timeoutMillis = -1;
   private boolean wasSuspended;
   private final ExceptionThrower exceptionThrower;
@@ -54,7 +58,7 @@ public class GafferTransaction implements Transaction {
 
     if (gafferJtaProperties.isTrackAbandonedTransactions()) {
       abandonedTransactionsTracker = new AbandonedTransactionsTracker(metricsTemplate, globalTransactionId, status);
-      cleaner.register(this, abandonedTransactionsTracker);
+      SingletonCleaner.INSTANCE.register(this, abandonedTransactionsTracker);
       metricsTemplate.registerTransactionAbandoningTracking();
     }
   }
@@ -306,10 +310,6 @@ public class GafferTransaction implements Transaction {
     setStatusInternal(status);
   }
 
-  public Uid getGlobalTransactionId() {
-    return globalTransactionId;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (o == null) {
@@ -324,18 +324,6 @@ public class GafferTransaction implements Transaction {
   @Override
   public int hashCode() {
     return globalTransactionId.hashCode();
-  }
-
-  public long getStartTimeMillis() {
-    return startTimeMillis;
-  }
-
-  public long getTimeoutMillis() {
-    return timeoutMillis;
-  }
-
-  public void setTimeoutMillis(long timeoutMillis) {
-    this.timeoutMillis = timeoutMillis;
   }
 
   public boolean beforeCommitValidationRequired() {
@@ -441,5 +429,11 @@ public class GafferTransaction implements Transaction {
     private String getTransactionInfo() {
       return globalTransactionId + "/" + TransactionStatuses.toString(status);
     }
+
+  }
+
+  private static class SingletonCleaner {
+
+    private static final Cleaner INSTANCE = Cleaner.create();
   }
 }

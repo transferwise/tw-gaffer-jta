@@ -59,14 +59,11 @@ public class DatabasesManager {
   }
 
   private DataSource getDataSourceByName(String name) {
-    switch (name) {
-      case "clients":
-        return clientsDataSource;
-      case "logs":
-        return logsDataSource;
-      default:
-        return null;
-    }
+    return switch (name) {
+      case "clients" -> clientsDataSource;
+      case "logs" -> logsDataSource;
+      default -> null;
+    };
   }
 
   public int getTableRowsCount(String globalTableName) {

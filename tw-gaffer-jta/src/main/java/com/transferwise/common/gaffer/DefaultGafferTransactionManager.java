@@ -96,10 +96,9 @@ public class DefaultGafferTransactionManager implements GafferTransactionManager
     if (currentTransaction != null) {
       throw new IllegalStateException("Can not resume. Current thread is already associated with transaction.");
     }
-    if (!(transaction instanceof GafferTransaction)) {
+    if (!(transaction instanceof GafferTransaction gafferTransaction)) {
       throw new IllegalStateException("Can not resume. Unsupported transaction object '" + transaction + "' provided.");
     }
-    GafferTransaction gafferTransaction = (GafferTransaction) transaction;
     if (log.isDebugEnabled()) {
       log.debug("Resuming transaction '{}'.", gafferTransaction.getTransactionInfo());
     }
@@ -154,7 +153,7 @@ public class DefaultGafferTransactionManager implements GafferTransactionManager
 
     if (transaction != null) {
       if (log.isDebugEnabled()) {
-        log.debug("Suspending transaction '" + transaction.getTransactionInfo() + "'.");
+        log.debug("Suspending transaction '{}'.", transaction.getTransactionInfo());
       }
       transaction.setSuspended(true);
       transactions.remove();

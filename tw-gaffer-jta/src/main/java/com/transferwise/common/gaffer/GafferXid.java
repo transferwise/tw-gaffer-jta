@@ -31,7 +31,7 @@ public class GafferXid implements Xid {
     return branchQualifier.asBytes();
   }
 
-  public static void main(String... args) throws Exception {
+  public static void main(String... args) {
     byte[] bytes = "Gffr".getBytes(StandardCharsets.UTF_8);
     StringBuilder sb = new StringBuilder("FORMAT_ID = 0x");
     for (int i = 0; i < 4; i++) {

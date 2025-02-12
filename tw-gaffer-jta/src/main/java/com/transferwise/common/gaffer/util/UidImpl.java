@@ -11,7 +11,7 @@ public class UidImpl implements Uid {
   private final String instanceId;
   private final long startTimeMillis;
   private final int sequence;
-  private byte[] bytes;
+  private final byte[] bytes;
 
   public UidImpl(String instanceId, long startTimeMillis) {
     this.instanceId = instanceId;

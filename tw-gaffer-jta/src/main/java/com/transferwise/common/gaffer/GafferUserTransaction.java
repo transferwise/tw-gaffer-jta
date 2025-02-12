@@ -14,7 +14,7 @@ public class GafferUserTransaction implements UserTransaction, Serializable {
   @Serial
   private static final long serialVersionUID = 1L;
 
-  private transient GafferTransactionManager transactionManager;
+  private final transient GafferTransactionManager transactionManager;
 
   public GafferUserTransaction(GafferTransactionManager transactionManager) {
     this.transactionManager = transactionManager;
