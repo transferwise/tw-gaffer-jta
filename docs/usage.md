@@ -18,19 +18,21 @@ dependencies {
 
 ## Configuration in Spring Boot Service
 
-1. Add the `com.transferwise.common:tw-gaffer-jta-starter` dependency.
+1. Add the `com.transferwise.common:tw-gaffer-jta-starter` dependency to `runtimeOnly` configuration.
 2. Expose all your HikariCP datasource's as beans.
-3. `tw-gaffer-jta-starter` Will then automatically wrap all data sources and expose them as beans with Gaffer's `GafferJtaDataSource`.
-4. If you need to configure the Gaffer datasource's, you can do so using the `GafferJtaProperties` class*.
 
-\* You can do this in two ways:
-1. Create a gafferConfig entry in your `application.yml`, which will then cause the bean to be automatically created. For example:
+`tw-gaffer-jta-starter` will automatically wrap all data sources and expose them as beans as Gaffer's `GafferJtaDataSource` instances.
+
+If you need to configure the Gaffer datasource's, you can do so by consulting with the `GafferJtaProperties` class.
+
+For example:
+
 ```yaml
 tw-gaffer-jta:
   core:
+    log-exceptions: false
     databases:
       mydb:
         commitOrder: 15
         connectionValidationInterval: 31s
 ```
-2. Create the `GafferJtaProperties` bean yourself.

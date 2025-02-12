@@ -55,8 +55,6 @@ public class TestApplication extends BaseTestApplication {
     innerDataSource.setPassword("");
 
     GafferJtaDataSource dataSource = new GafferJtaDataSource(transactionManager, "clients", innerDataSource);
-    dataSource.setTargetDataSource(innerDataSource);
-    dataSource.init();
     return dataSource;
   }
 
@@ -69,8 +67,6 @@ public class TestApplication extends BaseTestApplication {
     innerDataSource.setPassword("");
 
     GafferJtaDataSource dataSource = new GafferJtaDataSource(transactionManager, "users", innerDataSource);
-    dataSource.setTargetDataSource(innerDataSource);
-    dataSource.init();
     return dataSource;
   }
 
@@ -83,8 +79,6 @@ public class TestApplication extends BaseTestApplication {
     innerDataSource.setPassword("");
 
     GafferJtaDataSource dataSource = new GafferJtaDataSource(transactionManager, "secrets", innerDataSource);
-    dataSource.setTargetDataSource(innerDataSource);
-    dataSource.init();
     return dataSource;
   }
 
@@ -97,8 +91,6 @@ public class TestApplication extends BaseTestApplication {
     innerDataSource.setPassword("");
 
     GafferJtaDataSource dataSource = new GafferJtaDataSource(transactionManager, "accounts", innerDataSource);
-    dataSource.setTargetDataSource(innerDataSource);
-    dataSource.init();
     return dataSource;
   }
 
@@ -111,8 +103,6 @@ public class TestApplication extends BaseTestApplication {
     innerDataSource.setPassword("");
 
     GafferJtaDataSource dataSource = new GafferJtaDataSource(transactionManager, "clientsAdmin", innerDataSource);
-    dataSource.setTargetDataSource(innerDataSource);
-    dataSource.init();
     return dataSource;
   }
 
@@ -125,8 +115,6 @@ public class TestApplication extends BaseTestApplication {
     innerDataSource.setPassword("");
 
     GafferJtaDataSource dataSource = new GafferJtaDataSource(transactionManager, "usersAdmin", innerDataSource);
-    dataSource.setTargetDataSource(innerDataSource);
-    dataSource.init();
     return dataSource;
   }
 
@@ -139,8 +127,6 @@ public class TestApplication extends BaseTestApplication {
     innerDataSource.setPassword("");
 
     GafferJtaDataSource dataSource = new GafferJtaDataSource(transactionManager, "secretsAdmin", innerDataSource);
-    dataSource.setTargetDataSource(innerDataSource);
-    dataSource.init();
     return dataSource;
   }
 
@@ -153,8 +139,7 @@ public class TestApplication extends BaseTestApplication {
     innerDataSource.setPassword("");
 
     GafferJtaDataSource dataSource = new GafferJtaDataSource(transactionManager, "accountsAdmin", innerDataSource);
-    dataSource.setTargetDataSource(innerDataSource);
-    dataSource.init();
+    dataSource.setCommitOrder(1);
     return dataSource;
   }
 

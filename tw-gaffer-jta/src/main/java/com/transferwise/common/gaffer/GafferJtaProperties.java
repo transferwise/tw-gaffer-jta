@@ -15,6 +15,8 @@ public class GafferJtaProperties {
 
   /**
    * Specifies transaction length, after which we will "ping" connections, before starting the commit routine.
+   *
+   * <p>The mechanism helps to avoid partial commits, when a connection has been idle for too long and potentially already closed.
    */
   @NotNull
   private Duration beforeCommitValidationRequiredTime = Duration.ofSeconds(15);

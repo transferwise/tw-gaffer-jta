@@ -6,7 +6,6 @@ import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
-import io.micrometer.core.instrument.Timer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -40,14 +39,6 @@ public class MetricsTestHelper {
     return counter == null ? 0 : counter.count();
   }
 
-  public double getAccumulativeCount(String name, String tags) {
-    double sum = 0d;
-    for (var counter : meterRegistry.find(name).tags(getTagsList(tags)).counters()) {
-      sum += counter.count();
-    }
-    return sum;
-  }
-
   public Gauge getGauge(String name, List<Tag> tags) {
     return meterRegistry.find(name).tags(tags).gauge();
   }
@@ -56,22 +47,9 @@ public class MetricsTestHelper {
     return getGauge(name, getTagsList(tags));
   }
 
-  public double getGaugeValue(String name, Double defaultValue, List<Tag> tags) {
-    var gauge = getGauge(name, tags);
-    return gauge == null ? defaultValue : gauge.value();
-  }
-
   public double getGaugeValue(String name, Double defaultValue, String tags) {
     var gauge = getGauge(name, tags);
     return gauge == null ? defaultValue : gauge.value();
-  }
-
-  public Timer getTimer(String name, List<Tag> tags) {
-    return meterRegistry.find(name).tags(tags).timer();
-  }
-
-  public Timer getTimer(String name, String tags) {
-    return getTimer(name, getTagsList(tags));
   }
 
   protected List<Tag> getTagsList(String tagsSt) {
@@ -94,15 +72,4 @@ public class MetricsTestHelper {
     meterCache.clear();
   }
 
-  public double getGaugesValue(String name, double defaultValue, List<Tag> tags) {
-    var gauges = meterRegistry.find(name).tags(tags).gauges();
-    if (gauges.isEmpty()) {
-      return defaultValue;
-    }
-    var result = 0d;
-    for (var gauge : gauges) {
-      result += gauge.value();
-    }
-    return result;
-  }
 }

@@ -74,8 +74,8 @@ public class GafferJtaDataSource extends DataSourceWrapper {
           connectionResourceKey = id + ".con";
           this.dataSourceTag = gafferTransactionManager.getMetricsTemplate().createDataSourceNameTag(uniqueName);
         }
+        initialized = true;
       }
-      initialized = true;
     }
   }
 
@@ -193,13 +193,13 @@ public class GafferJtaDataSource extends DataSourceWrapper {
 
   private class NonTransactionalConnectionImpl extends ConnectionWrapper {
 
-    private final boolean autoCommitOnBorrow;
+    private final boolean autoCommitFlagOnBorrow;
 
     @SuppressFBWarnings("CT")
     public NonTransactionalConnectionImpl(Connection con) throws SQLException {
       super(con);
 
-      autoCommitOnBorrow = con.getAutoCommit();
+      autoCommitFlagOnBorrow = con.getAutoCommit();
       setAutoCommitFlag(con, true, false, true);
 
       ConnectionProxyUtils.tieTogether(this, con);
@@ -209,7 +209,7 @@ public class GafferJtaDataSource extends DataSourceWrapper {
       gafferTransactionManager.getMetricsTemplate().registerConnectionClose(dataSourceTag, false);
 
       try {
-        setAutoCommitBeforeRelease(getTargetConnection(), false, autoCommitOnBorrow);
+        setAutoCommitBeforeRelease(getTargetConnection(), false, autoCommitFlagOnBorrow);
       } finally {
         super.close();
       }
