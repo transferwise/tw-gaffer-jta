@@ -133,7 +133,7 @@ For that
    In Wise context, your data source beans should be just plain `HikariDataSource` instances.
 4. Remove the code creating all the beans now defined in the `GafferJtaConfiguration` class.
    In a typical Wise service, it comes down to deleting the whole `TransactionManagerConfiguration` class.
-5. Add `tw-gaffer-jta` into `runtimeOnly` configuration.
+5. Add `tw-gaffer-jta-starter` into `runtimeOnly` configuration.
 
 #### Without Auto Configuration
 
