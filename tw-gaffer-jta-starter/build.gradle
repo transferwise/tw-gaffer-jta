@@ -19,9 +19,8 @@ dependencies {
     implementation libraries.springBootStarterJdbc
     implementation libraries.twBaseUtils
 
-    runtimeOnly libraries.springBootStarterActuator
-
     testImplementation libraries.springBootStarterTest
 
+    testRuntimeOnly libraries.springBootStarterActuator
     testRuntimeOnly libraries.springBootStarterValidation
 }
