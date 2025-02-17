@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 If you used a custom Spring configuration, it is now the time to move to the autoconfiguration provided by `tw-gaffer-jta-starter`.
 Check [docs/usage.md](docs/usage.md) for how to set it up.
 
+> There is some helpful information for migrating to the starter under the changelog for version 2.1.0.
+
 If there is a reason why `tw-gaffer-jta-starter` can not be used, then you can replicate the configuration in `GafferJtaConfiguration` class yourself.
 
 It is also possible to just autoconfigure the transaction management, but not autoconfigure data sources. This can be achieved with property of
