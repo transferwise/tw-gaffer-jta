@@ -19,14 +19,17 @@ ext {
             jakartaTransactionApi           : "jakarta.transaction:jakarta.transaction-api",
             lombok                          : 'org.projectlombok:lombok',
             mariadbJavaClient               : 'org.mariadb.jdbc:mariadb-java-client',
+            micrometerCore                  : 'io.micrometer:micrometer-core',
             slf4jApi                        : 'org.slf4j:slf4j-api',
             springBootConfigurationProcessor: 'org.springframework.boot:spring-boot-configuration-processor',
             springContext                   : 'org.springframework:spring-context',
             springBootStarter               : 'org.springframework.boot:spring-boot-starter',
             springBootStarterJdbc           : 'org.springframework.boot:spring-boot-starter-jdbc',
             springBootStarterJpa            : 'org.springframework.boot:spring-boot-starter-data-jpa',
+            springBootStarterActuator       : 'org.springframework.boot:spring-boot-starter-actuator',
             springBootStarterTest           : 'org.springframework.boot:spring-boot-starter-test',
             springBootStarterValidation     : 'org.springframework.boot:spring-boot-starter-validation',
+            springOrm                       : 'org.springframework:spring-orm',
             springTx                        : 'org.springframework:spring-tx',
             tomcatJdbc                      : 'org.apache.tomcat:tomcat-jdbc'
     ]

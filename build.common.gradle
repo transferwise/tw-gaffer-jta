@@ -85,7 +85,7 @@ compileTestJava {
     options.forkOptions.jvmArgs << '-Xmx256m'
 }
 
-tasks.withType(Checkstyle) {
+tasks.withType(Checkstyle).configureEach {
     config = resources.text.fromFile(file('../google_checks.xml'))
 
     // Flyway requires Vx__ class name, which ofc conflicts with all sensible rules.
@@ -124,8 +124,6 @@ test {
 }
 
 tasks.findAll { it.name.startsWith("spotbugs") }*.configure {
-    effort = "max"
-
     excludeFilter = file('../spotbugs-exclude.xml')
 
     reports {

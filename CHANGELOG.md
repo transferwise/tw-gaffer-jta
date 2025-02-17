@@ -5,19 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0]
+
+### Changed
+
+* Refactored the classes and initialisation setup away from static classes.
+
+* Made abandoned transactions tracking configurable.
+
+* Migrated from JMX to Micrometer.
+
+### Migration guide
+
+If you used a custom Spring configuration, it is now the time to move to the autoconfiguration provided by `tw-gaffer-jta-starter`.
+Check [docs/usage.md](docs/usage.md) for how to set it up.
+
+> There is some helpful information for migrating to the starter under the changelog for version 2.1.0.
+
+If there is a reason why `tw-gaffer-jta-starter` can not be used, then you can replicate the configuration in `GafferJtaConfiguration` class yourself.
+
+It is also possible to just autoconfigure the transaction management, but not autoconfigure data sources. This can be achieved with property of
+`tw-gaffer-jta.config.post-process-beans: false`.
+
+And then, the necessary Gaffer compatible data sources can be created as follows.
+
+```java
+@Bean
+public GafferJtaDataSource accountsDataSource(GafferTransactionManager transactionManager) {
+  DataSource innerDataSource = createHikariOrWhatEverDataSource();
+
+  GafferJtaDataSource dataSource = new GafferJtaDataSource(transactionManager, "accounts", innerDataSource);
+  dataSource.setCommitOrder(1);
+  return dataSource;
+}
+```
+
 ## [3.2.0]
+
+### Changed
 
 * Disabling abandoned transactions tracker.
 
 ## [3.1.1]
 
 ### Changed
+
 * Add support for spring boot 3.4
 * Remove support for spring boot 3.2
 
 ## [3.1.0] - 2024-07-18
 
 ### Changed
+
 * Run tests against Spring Boot 3.3.
 * Baseline moved to Spring Boot 3.2. Library is now built and published against Spring Boot 3.2.
 
@@ -30,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.0.2] - 2024-02-29
 
 ### Changed
+
 - Added support for Spring Boot 3.2.
   - Updated dependencies.
 
@@ -72,7 +112,7 @@ If you were using hardcoded `gafferJtaJtaTransactionManager` bean name in your s
 
 ### Added
 
-* Spring Boot auto configuration module `tw-gaffer-jta-starter`.
+* Spring Boot autoconfiguration module `tw-gaffer-jta-starter`.
 
 ### Changed
 
@@ -95,7 +135,7 @@ For that
    In Wise context, your data source beans should be just plain `HikariDataSource` instances.
 4. Remove the code creating all the beans now defined in the `GafferJtaConfiguration` class.
    In a typical Wise service, it comes down to deleting the whole `TransactionManagerConfiguration` class.
-5. Add `tw-gaffer-jta` into `runtimeOnly` configuration.
+5. Add `tw-gaffer-jta-starter` into `runtimeOnly` configuration.
 
 #### Without Auto Configuration
 

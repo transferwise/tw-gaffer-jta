@@ -2,17 +2,15 @@ package com.transferwise.common.gaffer.jdbc;
 
 import com.transferwise.common.baseutils.jdbc.ConnectionProxyUtils;
 import com.transferwise.common.baseutils.jdbc.DataSourceProxyUtils;
+import com.transferwise.common.gaffer.GafferTransactionManager;
 import com.transferwise.common.gaffer.OrderedResource;
-import com.transferwise.common.gaffer.ServiceRegistry;
-import com.transferwise.common.gaffer.ServiceRegistryHolder;
 import com.transferwise.common.gaffer.ValidatableResource;
 import com.transferwise.common.gaffer.util.DummyXaResource;
-import com.transferwise.common.gaffer.util.FormatLogger;
-import com.transferwise.common.gaffer.util.MBeanUtil;
 import com.transferwise.common.gaffer.util.XaExceptionImpl;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.micrometer.core.instrument.Tag;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Status;
-import jakarta.transaction.TransactionSynchronizationRegistry;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicLong;
@@ -20,94 +18,65 @@ import javax.sql.DataSource;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-public class GafferJtaDataSource extends DataSourceWrapper implements DataSourceManagedBean {
+@Slf4j
+public class GafferJtaDataSource extends DataSourceWrapper {
 
-  private static final FormatLogger log = new FormatLogger(GafferJtaDataSource.class);
+  private static final AtomicLong idSequence = new AtomicLong();
 
-  private static AtomicLong idSequence = new AtomicLong();
-  private String id;
-  private String connectionResourceKey;
+  @Getter
+  @Setter
   private String uniqueName;
-  private boolean registerAsMBean = true;
 
-  private int validationTimeoutSeconds = 0;
+  @Getter
+  @Setter
   private AutoCommitStrategy beforeReleaseAutoCommitStrategy = AutoCommitStrategy.NONE;
-  private int order = 0;
-  private volatile boolean initialized;
 
-  private final AtomicLong allConnectionGetsCount = new AtomicLong();
-  private final AtomicLong bufferedConnectionGetsCount = new AtomicLong();
-  private final AtomicLong nonTransactionalConnectionGetsCount = new AtomicLong();
-  private final AtomicLong autoCommitSwitchingsCount = new AtomicLong();
-  private final AtomicLong closedConnectionsCount = new AtomicLong();
+  @Getter
+  @Setter
+  private int commitOrder = 0;
 
-  public GafferJtaDataSource() {
+  @Getter
+  @Setter
+  private int validationTimeoutSeconds = 15;
 
-  }
+  private final GafferTransactionManager gafferTransactionManager;
 
-  public GafferJtaDataSource(DataSource targetDataSource) {
+  private String connectionResourceKey;
+  private Tag dataSourceTag;
+
+  private boolean initialized;
+
+  public GafferJtaDataSource(GafferTransactionManager gafferTransactionManager, String uniqueName, DataSource targetDataSource) {
     super(targetDataSource);
+
+    this.gafferTransactionManager = gafferTransactionManager;
+    this.uniqueName = uniqueName;
 
     DataSourceProxyUtils.tieTogether(this, targetDataSource);
   }
 
   @PostConstruct
+  @SuppressFBWarnings("DC")
   public void init() {
+    // No need for volatile as we are dealing with 32 bit literal.
     if (!initialized) {
       synchronized (this) {
         if (!initialized) {
           if (StringUtils.isEmpty(uniqueName)) {
             throw new IllegalStateException("Unique name is not set.");
           }
-          id = GafferJtaDataSource.class + "." + idSequence.incrementAndGet();
+          var id = GafferJtaDataSource.class + "." + idSequence.incrementAndGet();
           connectionResourceKey = id + ".con";
-
-          if (registerAsMBean) {
-            MBeanUtil.registerMBeanQuietly(this,
-                "com.transferwise.common.gaffer:type=JdbcDataSource,name=" + uniqueName);
-          }
-          initialized = true;
+          this.dataSourceTag = gafferTransactionManager.getMetricsTemplate().createDataSourceNameTag(uniqueName);
         }
+        initialized = true;
       }
     }
-  }
-
-  public AutoCommitStrategy getBeforeReleaseAutoCommitStrategy() {
-    return beforeReleaseAutoCommitStrategy;
-  }
-
-  public void setBeforeReleaseAutoCommitStrategy(AutoCommitStrategy beforeReleaseAutoCommitStrategy) {
-    this.beforeReleaseAutoCommitStrategy = beforeReleaseAutoCommitStrategy;
-  }
-
-  public String getUniqueName() {
-    return uniqueName;
-  }
-
-  public void setUniqueName(String uniqueName) {
-    this.uniqueName = uniqueName;
-  }
-
-  public void setOrder(int order) {
-    this.order = order;
-  }
-
-  public void setRegisterAsMBean(boolean registerAsMBean) {
-    this.registerAsMBean = registerAsMBean;
-  }
-
-  public int getValidationTimeoutSeconds() {
-    return validationTimeoutSeconds;
-  }
-
-  public void setValidationTimeoutSeconds(int validationTimeoutSeconds) {
-    this.validationTimeoutSeconds = validationTimeoutSeconds;
-  }
-
-  public int getOrder() {
-    return order;
   }
 
   @Override
@@ -122,33 +91,29 @@ public class GafferJtaDataSource extends DataSourceWrapper implements DataSource
 
   private Connection getNonTransactionalConnection(String username, String password) throws SQLException {
     log.debug("Connection requested outside of transaction.");
-    NonTransactionalConnectionImpl con = new NonTransactionalConnectionImpl(this, getConnectionFromDataSource(username, password));
-    nonTransactionalConnectionGetsCount.incrementAndGet();
-    return con;
+    return new NonTransactionalConnectionImpl(getConnectionFromDataSource(username, password));
   }
 
   private Connection getConnection0(String username, String password) throws SQLException {
     init();
+    var transactional = gafferTransactionManager.getTransactionSynchronizationRegistry().getTransactionStatus() != Status.STATUS_NO_TRANSACTION;
 
-    ServiceRegistry serviceRegistry = ServiceRegistryHolder.getServiceRegistry();
-    TransactionSynchronizationRegistry registry = serviceRegistry.getTransactionSynchronizationRegistry();
-    allConnectionGetsCount.incrementAndGet();
-    if (registry.getTransactionStatus() == Status.STATUS_NO_TRANSACTION) {
+    gafferTransactionManager.getMetricsTemplate().registerConnectionGet(dataSourceTag, transactional);
+
+    if (gafferTransactionManager.getTransactionSynchronizationRegistry().getTransactionStatus() == Status.STATUS_NO_TRANSACTION) {
       return getNonTransactionalConnection(username, password);
     }
-    return getTransactionalConnection(serviceRegistry, registry, username, password);
+    return getTransactionalConnection(username, password);
   }
 
-  private Connection getTransactionalConnection(ServiceRegistry serviceRegistry, TransactionSynchronizationRegistry registry, String username,
-      String password)
-      throws SQLException {
-    TransactionalConnectionImpl con = (TransactionalConnectionImpl) registry.getResource(connectionResourceKey);
+  private Connection getTransactionalConnection(String username, String password) throws SQLException {
+    var con = (TransactionalConnectionImpl) gafferTransactionManager.getTransactionSynchronizationRegistry().getResource(connectionResourceKey);
     if (con == null) {
       try {
-        con = new TransactionalConnectionImpl(this, getConnectionFromDataSource(username, password), uniqueName);
-        registry.putResource(connectionResourceKey, con);
-        XAResource xaResource = new XaResourceImpl(con, order, getValidationTimeoutSeconds());
-        serviceRegistry.getTransactionManager().getTransactionImpl().enlistResource(xaResource);
+        con = new TransactionalConnectionImpl(getConnectionFromDataSource(username, password));
+        gafferTransactionManager.getTransactionSynchronizationRegistry().putResource(connectionResourceKey, con);
+        XAResource xaResource = new XaResourceImpl(con, getCommitOrder(), getValidationTimeoutSeconds());
+        gafferTransactionManager.getTransaction().enlistResource(xaResource);
       } catch (Throwable rethrow) {
         try {
           if (con != null) {
@@ -157,10 +122,13 @@ public class GafferJtaDataSource extends DataSourceWrapper implements DataSource
         } catch (SQLException e) {
           log.error(e.getMessage(), e);
         }
-        throw rethrow;
+        if (rethrow instanceof SQLException) {
+          throw (SQLException) rethrow;
+        }
+        throw new SQLException(rethrow);
       }
     } else {
-      bufferedConnectionGetsCount.incrementAndGet();
+      gafferTransactionManager.getMetricsTemplate().registerConnectionReuse(dataSourceTag, true);
     }
     return con;
   }
@@ -172,52 +140,50 @@ public class GafferJtaDataSource extends DataSourceWrapper implements DataSource
     return getTargetDataSource().getConnection(username, password);
   }
 
-  private void setAutoCommit(Connection con, boolean autoCommit) throws SQLException {
+  private void setAutoCommitFlag(Connection con, boolean atAcquire, boolean transactional, boolean autoCommit) throws SQLException {
     boolean currentAutoCommit = con.getAutoCommit();
 
     if (currentAutoCommit != autoCommit) {
-      autoCommitSwitchingsCount.incrementAndGet();
+      gafferTransactionManager.getMetricsTemplate().registerAutoCommitSwitch(dataSourceTag, atAcquire, transactional, autoCommit);
+
       con.setAutoCommit(autoCommit);
     }
   }
 
-  private void setAutoCommitBeforeRelease(Connection con, boolean autoCommitOnBorrow) throws SQLException {
+  private void setAutoCommitBeforeRelease(Connection con, boolean transactional, boolean autoCommitOnBorrow) throws SQLException {
     switch (getBeforeReleaseAutoCommitStrategy()) {
       case RESTORE:
-        setAutoCommit(con, autoCommitOnBorrow);
+        setAutoCommitFlag(con, false, transactional, autoCommitOnBorrow);
         break;
       case TRUE:
-        setAutoCommit(con, true);
+        setAutoCommitFlag(con, false, transactional, true);
         break;
       case FALSE:
-        setAutoCommit(con, false);
+        setAutoCommitFlag(con, false, transactional, false);
         break;
       default:
     }
   }
 
-  private static class TransactionalConnectionImpl extends ConnectionWrapper {
+  private class TransactionalConnectionImpl extends ConnectionWrapper {
 
-    private boolean autoCommitOnBorrow;
-    private GafferJtaDataSource gafferJtaDataSource;
-    private String resourceUniqueName;
+    private final boolean autoCommitOnBorrow;
 
-    public TransactionalConnectionImpl(GafferJtaDataSource gafferJtaDataSource, Connection con, String resourceUniqueName) throws SQLException {
+    @SuppressFBWarnings("CT")
+    public TransactionalConnectionImpl(Connection con) throws SQLException {
       super(con);
-      this.gafferJtaDataSource = gafferJtaDataSource;
-      this.resourceUniqueName = resourceUniqueName;
       autoCommitOnBorrow = con.getAutoCommit();
-      gafferJtaDataSource.setAutoCommit(con, false);
+      setAutoCommitFlag(con, true, true, false);
 
       ConnectionProxyUtils.tieTogether(this, con);
     }
 
     public void closeConnection() throws SQLException {
+      gafferTransactionManager.getMetricsTemplate().registerConnectionClose(dataSourceTag, true);
       try (Connection con = getTargetConnection()) {
-        gafferJtaDataSource.setAutoCommitBeforeRelease(con, autoCommitOnBorrow);
-        log.debug("Closing connection for resource '{}'.", resourceUniqueName);
+        setAutoCommitBeforeRelease(con, true, autoCommitOnBorrow);
+        log.debug("Closing connection for resource '{}'.", getUniqueName());
       }
-      gafferJtaDataSource.closedConnectionsCount.incrementAndGet();
     }
 
     @Override
@@ -225,27 +191,28 @@ public class GafferJtaDataSource extends DataSourceWrapper implements DataSource
     }
   }
 
-  private static class NonTransactionalConnectionImpl extends ConnectionWrapper {
+  private class NonTransactionalConnectionImpl extends ConnectionWrapper {
 
-    private boolean autoCommitOnBorrow;
-    private GafferJtaDataSource gafferJtaDataSource;
+    private final boolean autoCommitFlagOnBorrow;
 
-    public NonTransactionalConnectionImpl(GafferJtaDataSource gafferJtaDataSource, Connection con) throws SQLException {
+    @SuppressFBWarnings("CT")
+    public NonTransactionalConnectionImpl(Connection con) throws SQLException {
       super(con);
-      this.gafferJtaDataSource = gafferJtaDataSource;
-      autoCommitOnBorrow = con.getAutoCommit();
-      gafferJtaDataSource.setAutoCommit(con, true);
+
+      autoCommitFlagOnBorrow = con.getAutoCommit();
+      setAutoCommitFlag(con, true, false, true);
 
       ConnectionProxyUtils.tieTogether(this, con);
     }
 
     public void close() throws SQLException {
+      gafferTransactionManager.getMetricsTemplate().registerConnectionClose(dataSourceTag, false);
+
       try {
-        gafferJtaDataSource.setAutoCommitBeforeRelease(getTargetConnection(), autoCommitOnBorrow);
+        setAutoCommitBeforeRelease(getTargetConnection(), false, autoCommitFlagOnBorrow);
       } finally {
         super.close();
       }
-      gafferJtaDataSource.closedConnectionsCount.incrementAndGet();
     }
   }
 
@@ -309,30 +276,6 @@ public class GafferJtaDataSource extends DataSourceWrapper implements DataSource
         throw new RuntimeException(e);
       }
     }
-  }
-
-  @Override
-  public long getAllConnectionGetsCount() {
-    return allConnectionGetsCount.get();
-  }
-
-  @Override
-  public long getBufferedConnectionGetsCount() {
-    return bufferedConnectionGetsCount.get();
-  }
-
-  @Override
-  public long getNonTransactionalConnectionGetsCount() {
-    return nonTransactionalConnectionGetsCount.get();
-  }
-
-  @Override
-  public long getAutoCommitSwitchingCount() {
-    return autoCommitSwitchingsCount.get();
-  }
-
-  public long getClosedConnectionsCount() {
-    return closedConnectionsCount.get();
   }
 
 }

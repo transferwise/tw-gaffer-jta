@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Isolation;
 
 @SpringBootTest(classes = TestApplication.class)
-class AutoConfigurationIntTest {
+class GafferAutoConfigurationIntTest {
 
   @Autowired
   private DataSource dataSource;
@@ -30,10 +30,9 @@ class AutoConfigurationIntTest {
     var gafferDataSource = (GafferJtaDataSource) springAdapter.getTargetDataSource();
 
     assertNotNull(gafferDataSource);
-    assertNotNull(gafferDataSource.getValidationTimeoutSeconds());
 
     assertEquals(31, gafferDataSource.getValidationTimeoutSeconds());
-    assertEquals(15, gafferDataSource.getOrder());
+    assertEquals(15, gafferDataSource.getCommitOrder());
 
     assertEquals(gafferDataSource.getParentDataSource(), springAdapter);
 

@@ -3,7 +3,6 @@ package com.transferwise.common.gaffer;
 import com.transferwise.common.gaffer.util.Clock;
 import com.transferwise.common.gaffer.util.DummyXaResource;
 import com.transferwise.common.gaffer.util.ExceptionThrower;
-import com.transferwise.common.gaffer.util.FormatLogger;
 import com.transferwise.common.gaffer.util.HeuristicMixedExceptionImpl;
 import com.transferwise.common.gaffer.util.RollbackExceptionImpl;
 import com.transferwise.common.gaffer.util.TransactionStatuses;
@@ -22,39 +21,52 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
-public class TransactionImpl implements Transaction {
-
-  private static final FormatLogger log = new FormatLogger(TransactionImpl.class);
-
-  private static Cleaner cleaner = Cleaner.create();
+@Slf4j
+public class GafferTransaction implements Transaction {
 
   private int status = Status.STATUS_NO_TRANSACTION;
+  @Getter
   private final Uid globalTransactionId;
   private final List<XAResource> xaResources = new CopyOnWriteArrayList<>();
   private final List<Synchronization> synchronizations = new CopyOnWriteArrayList<>();
   private final List<Synchronization> interposedSynchronizations = new CopyOnWriteArrayList<>();
   private final Map<Object, Object> resources = new ConcurrentHashMap<>();
+  @Getter
   private final long startTimeMillis;
   private long beforeCommitValidationRequiredTimeMs = -1;
+  @Setter
+  @Getter
   private long timeoutMillis = -1;
-  private boolean suspended;
+  private boolean wasSuspended;
   private final ExceptionThrower exceptionThrower;
+  private final MetricsTemplate metricsTemplate;
   private AbandonedTransactionsTracker abandonedTransactionsTracker;
+  private final Clock clock;
 
-  public TransactionImpl() {
-    ServiceRegistry serviceRegistry = ServiceRegistryHolder.getServiceRegistry();
-    String instanceId = serviceRegistry.getConfiguration().getInstanceId();
-    startTimeMillis = getClock().currentTimeMillis();
+  public GafferTransaction(Clock clock, GafferJtaProperties gafferJtaProperties, MetricsTemplate metricsTemplate) {
+    this.metricsTemplate = metricsTemplate;
+    this.clock = clock;
+
+    String instanceId = gafferJtaProperties.getInstanceId();
+    startTimeMillis = clock.currentTimeMillis();
     globalTransactionId = new UidImpl(instanceId, startTimeMillis);
-    exceptionThrower = new ExceptionThrower(serviceRegistry.getConfiguration().isLogExceptions());
+    exceptionThrower = new ExceptionThrower(gafferJtaProperties.isLogExceptions());
 
-    abandonedTransactionsTracker = new AbandonedTransactionsTracker(getTransactionManagerStatistics(), globalTransactionId, status);
-    //cleaner.register(this, abandonedTransactionsTracker);
+    if (gafferJtaProperties.isTrackAbandonedTransactions()) {
+      abandonedTransactionsTracker = new AbandonedTransactionsTracker(metricsTemplate, globalTransactionId, status);
+      SingletonCleaner.INSTANCE.register(this, abandonedTransactionsTracker);
+      metricsTemplate.registerTransactionAbandoningTracking();
+    }
   }
 
   public void setSuspended(boolean suspended) {
-    this.suspended = suspended;
+    if (suspended) {
+      wasSuspended = true;
+    }
   }
 
   public void putResource(Object key, Object val) {
@@ -73,7 +85,7 @@ public class TransactionImpl implements Transaction {
 
   public void begin(Integer timeoutSeconds, long beforeCommitValidationRequiredTimeMs) {
     if (log.isDebugEnabled()) {
-      log.debug("Starting transaction '%s' with timeout of '%s' seconds.", getTransactionInfo(),
+      log.debug("Starting transaction '{}' with timeout of '{}' seconds.", getTransactionInfo(),
           timeoutSeconds == null ? "infinite" : timeoutSeconds);
     }
     if (timeoutSeconds != null) {
@@ -85,13 +97,15 @@ public class TransactionImpl implements Transaction {
 
   private void setStatusInternal(int status) {
     this.status = status;
-    abandonedTransactionsTracker.status = status;
+    if (abandonedTransactionsTracker != null) {
+      abandonedTransactionsTracker.status = status;
+    }
   }
 
   @Override
   public void commit() throws RollbackException, IllegalStateException {
     if (log.isDebugEnabled()) {
-      log.debug("Committing transaction '%s'.", getTransactionInfo());
+      log.debug("Committing transaction '{}'.", getTransactionInfo());
     }
     if (status == Status.STATUS_NO_TRANSACTION) {
       exceptionThrower.throwException(new IllegalStateException("Can not commit '" + getTransactionInfo() + "'. Transaction has not been started."));
@@ -154,7 +168,7 @@ public class TransactionImpl implements Transaction {
 
       if (t != null) {
         if (idx > 0) {
-          getTransactionManagerStatistics().markHeuristicCommit();
+          metricsTemplate.registerHeuristicTransactionCommit();
         }
         rollback();
         if (idx == 0) {
@@ -165,10 +179,14 @@ public class TransactionImpl implements Transaction {
             .throwException(new HeuristicMixedExceptionImpl("Can not commit '" + getTransactionInfo() + "'. Commiting a resource failed.", t));
       }
       setStatus(Status.STATUS_COMMITTED);
-      abandonedTransactionsTracker.abandoned.set(false);
-      getTransactionManagerStatistics().markCommitted(suspended);
+
+      if (abandonedTransactionsTracker != null) {
+        abandonedTransactionsTracker.abandoned.set(false);
+      }
+
+      metricsTemplate.registerTransactionCommit(wasSuspended);
       if (log.isDebugEnabled()) {
-        log.debug("Transaction '%s' successfully commited.", getTransactionInfo());
+        log.debug("Transaction '{}' successfully commited.", getTransactionInfo());
       }
     } finally {
       fireAfterCompletionEvent();
@@ -180,7 +198,7 @@ public class TransactionImpl implements Transaction {
   @Override
   public boolean delistResource(XAResource xaRes, int flag) {
     if (log.isDebugEnabled()) {
-      log.debug("Delisting resource '%s' for transaction '%s'.", xaRes, getTransactionInfo());
+      log.debug("Delisting resource '{}' for transaction '{}'.", xaRes, getTransactionInfo());
     }
     if (status == Status.STATUS_NO_TRANSACTION) {
       exceptionThrower
@@ -196,7 +214,7 @@ public class TransactionImpl implements Transaction {
   @Override
   public boolean enlistResource(XAResource xaRes) {
     if (log.isDebugEnabled()) {
-      log.debug("Enlisting resource '%s' for transaction '%s'.", xaRes, getTransactionInfo());
+      log.debug("Enlisting resource '{}' for transaction '{}'.", xaRes, getTransactionInfo());
     }
     if (status == Status.STATUS_NO_TRANSACTION) {
       exceptionThrower
@@ -226,7 +244,7 @@ public class TransactionImpl implements Transaction {
   @Override
   public void registerSynchronization(Synchronization sync) throws RollbackException {
     if (log.isDebugEnabled()) {
-      log.debug("Registering synchronization '%s' for transaction '%s'.", sync, getTransactionInfo());
+      log.debug("Registering synchronization '{}' for transaction '{}'.", sync, getTransactionInfo());
     }
 
     if (getStatus() == Status.STATUS_MARKED_ROLLBACK) {
@@ -235,9 +253,12 @@ public class TransactionImpl implements Transaction {
     synchronizations.add(sync);
   }
 
-  public void registerInterposedSynchronization(Synchronization sync) {
+  public void registerInterposedSynchronization(Synchronization sync) throws RollbackException {
     if (log.isDebugEnabled()) {
-      log.debug("Registering interposed synchronization '%s' for transaction '%s'.", sync, getTransactionInfo());
+      log.debug("Registering interposed synchronization '{}' for transaction '{}'.", sync, getTransactionInfo());
+    }
+    if (getStatus() == Status.STATUS_MARKED_ROLLBACK) {
+      exceptionThrower.throwException(new RollbackException("Transaction is marked as rollback-only."));
     }
     interposedSynchronizations.add(sync);
   }
@@ -245,9 +266,11 @@ public class TransactionImpl implements Transaction {
   @Override
   public void rollback() {
     try {
-      abandonedTransactionsTracker.abandoned.set(false);
+      if (abandonedTransactionsTracker != null) {
+        abandonedTransactionsTracker.abandoned.set(false);
+      }
       if (log.isDebugEnabled()) {
-        log.debug("Rolling back transaction '%s'.", getTransactionInfo());
+        log.debug("Rolling back transaction '{}'.", getTransactionInfo());
       }
       setStatus(Status.STATUS_ROLLING_BACK);
 
@@ -261,9 +284,9 @@ public class TransactionImpl implements Transaction {
       xaResources.clear();
       resources.clear();
       setStatus(Status.STATUS_ROLLEDBACK);
-      getTransactionManagerStatistics().markRollback(suspended);
+      metricsTemplate.registerTransactionRollback(wasSuspended);
     } catch (Throwable t) {
-      getTransactionManagerStatistics().markRollbackFailure(suspended);
+      metricsTemplate.registerTransactionRollbackFailure(wasSuspended);
       if (t instanceof RuntimeException) {
         exceptionThrower.throwException((RuntimeException) t);
       } else {
@@ -275,20 +298,16 @@ public class TransactionImpl implements Transaction {
   @Override
   public void setRollbackOnly() {
     if (log.isDebugEnabled()) {
-      log.debug("Marking transaction '%s' to roll back.", getTransactionInfo());
+      log.debug("Marking transaction '{}' to roll back.", getTransactionInfo());
     }
     setStatus(Status.STATUS_MARKED_ROLLBACK);
   }
 
   public void setStatus(int status) {
     if (log.isDebugEnabled()) {
-      log.debug("Setting transaction '%s' status to '%s'.", getTransactionInfo(), TransactionStatuses.toString(status));
+      log.debug("Setting transaction '{}' status to '{}'.", getTransactionInfo(), TransactionStatuses.toString(status));
     }
     setStatusInternal(status);
-  }
-
-  public Uid getGlobalTransactionId() {
-    return globalTransactionId;
   }
 
   @Override
@@ -296,10 +315,10 @@ public class TransactionImpl implements Transaction {
     if (o == null) {
       return false;
     }
-    if (!(o instanceof TransactionImpl)) {
+    if (!(o instanceof GafferTransaction)) {
       return false;
     }
-    return getGlobalTransactionId().equals(((TransactionImpl) o).getGlobalTransactionId());
+    return getGlobalTransactionId().equals(((GafferTransaction) o).getGlobalTransactionId());
   }
 
   @Override
@@ -307,23 +326,11 @@ public class TransactionImpl implements Transaction {
     return globalTransactionId.hashCode();
   }
 
-  public long getStartTimeMillis() {
-    return startTimeMillis;
-  }
-
-  public long getTimeoutMillis() {
-    return timeoutMillis;
-  }
-
-  public void setTimeoutMillis(long timeoutMillis) {
-    this.timeoutMillis = timeoutMillis;
-  }
-
   public boolean beforeCommitValidationRequired() {
     if (beforeCommitValidationRequiredTimeMs < 0) {
       return false;
     }
-    return getClock().currentTimeMillis() - getStartTimeMillis() > beforeCommitValidationRequiredTimeMs;
+    return clock.currentTimeMillis() - getStartTimeMillis() > beforeCommitValidationRequiredTimeMs;
   }
 
   /**
@@ -339,7 +346,7 @@ public class TransactionImpl implements Transaction {
     if (timeoutMillis <= 0) {
       return false;
     }
-    return getClock().currentTimeMillis() > getStartTimeMillis() + timeoutMillis;
+    return clock.currentTimeMillis() > getStartTimeMillis() + timeoutMillis;
   }
 
   private void fireBeforeCompletionEvent() {
@@ -373,63 +380,40 @@ public class TransactionImpl implements Transaction {
     result.sort((a, b) -> {
       int oa = a instanceof OrderedResource ? ((OrderedResource) a).getOrder() : Integer.MAX_VALUE;
       int ob = a instanceof OrderedResource ? ((OrderedResource) b).getOrder() : Integer.MAX_VALUE;
-      return oa > ob ? 1 : oa == ob ? 0 : -1;
+      return Integer.compare(oa, ob);
     });
     return result;
-  }
-
-  protected Clock getClock() {
-    return ServiceRegistryHolder.getServiceRegistry().getClock();
   }
 
   public String getTransactionInfo() {
     return globalTransactionId + "/" + TransactionStatuses.toString(getStatus());
   }
 
-  private TransactionManagerImpl getTransactionManager() {
-    return ServiceRegistryHolder.getServiceRegistry().getTransactionManager();
-  }
-
-  private TransactionManagerStatistics getTransactionManagerStatistics() {
-    return getTransactionManager().getTransactionManagerStatistics();
-  }
-
   private boolean isDoneOrFinishing() {
-    switch (status) {
-      case Status.STATUS_PREPARING:
-      case Status.STATUS_PREPARED:
-      case Status.STATUS_COMMITTING:
-      case Status.STATUS_COMMITTED:
-      case Status.STATUS_ROLLING_BACK:
-      case Status.STATUS_ROLLEDBACK:
-        return true;
-      default:
-        return false;
-    }
+    return switch (status) {
+      case Status.STATUS_PREPARING, Status.STATUS_PREPARED, Status.STATUS_COMMITTING, Status.STATUS_COMMITTED, Status.STATUS_ROLLING_BACK,
+           Status.STATUS_ROLLEDBACK -> true;
+      default -> false;
+    };
   }
 
   private boolean isWorking() {
-    switch (status) {
-      case Status.STATUS_PREPARING:
-      case Status.STATUS_PREPARED:
-      case Status.STATUS_COMMITTING:
-      case Status.STATUS_ROLLING_BACK:
-        return true;
-      default:
-        return false;
-    }
+    return switch (status) {
+      case Status.STATUS_PREPARING, Status.STATUS_PREPARED, Status.STATUS_COMMITTING, Status.STATUS_ROLLING_BACK -> true;
+      default -> false;
+    };
   }
 
   private static class AbandonedTransactionsTracker implements Runnable {
 
     // Abandoned unless something signals otherwise
-    private AtomicBoolean abandoned = new AtomicBoolean(true);
-    private TransactionManagerStatistics transactionManagerStatistics;
-    private Uid globalTransactionId;
-    private int status;
+    private final AtomicBoolean abandoned = new AtomicBoolean(true);
+    private final MetricsTemplate metricsTemplate;
+    private final Uid globalTransactionId;
+    private volatile int status;
 
-    private AbandonedTransactionsTracker(TransactionManagerStatistics transactionManagerStatistics, Uid globalTransactionId, int status) {
-      this.transactionManagerStatistics = transactionManagerStatistics;
+    private AbandonedTransactionsTracker(MetricsTemplate metricsTemplate, Uid globalTransactionId, int status) {
+      this.metricsTemplate = metricsTemplate;
       this.globalTransactionId = globalTransactionId;
       this.status = status;
     }
@@ -437,13 +421,19 @@ public class TransactionImpl implements Transaction {
     @Override
     public void run() {
       if (abandoned.get()) {
-        transactionManagerStatistics.markAbandoned();
-        log.warn("Transaction '%s' was abandoned.", getTransactionInfo());
+        metricsTemplate.registerTransactionAbandoning();
+        log.warn("Transaction '{}' was abandoned.", getTransactionInfo());
       }
     }
 
     private String getTransactionInfo() {
       return globalTransactionId + "/" + TransactionStatuses.toString(status);
     }
+
+  }
+
+  private static class SingletonCleaner {
+
+    private static final Cleaner INSTANCE = Cleaner.create();
   }
 }

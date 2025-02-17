@@ -6,26 +6,25 @@ import jakarta.transaction.Status;
 import jakarta.transaction.Synchronization;
 import jakarta.transaction.TransactionSynchronizationRegistry;
 
-public class TransactionSynchronizationRegistryImpl implements TransactionSynchronizationRegistry {
+public class GafferTransactionSynchronizationRegistry implements TransactionSynchronizationRegistry {
 
-  private final TransactionManagerImpl transactionManager;
-
+  private final DefaultGafferTransactionManager transactionManager;
   private final ExceptionThrower exceptionThrower;
 
-  public TransactionSynchronizationRegistryImpl(TransactionManagerImpl transactionManager, Configuration configuration) {
+  public GafferTransactionSynchronizationRegistry(DefaultGafferTransactionManager transactionManager, GafferJtaProperties gafferJtaProperties) {
     this.transactionManager = transactionManager;
-    exceptionThrower = new ExceptionThrower(configuration.isLogExceptions());
+    exceptionThrower = new ExceptionThrower(gafferJtaProperties.isLogExceptions());
   }
 
   @Override
   public Object getTransactionKey() {
-    TransactionImpl transaction = getTransaction();
+    GafferTransaction transaction = getTransaction();
     return transaction == null ? null : transaction.getGlobalTransactionId();
   }
 
   @Override
   public void putResource(Object key, Object value) {
-    TransactionImpl transaction = getTransaction();
+    GafferTransaction transaction = getTransaction();
     if (transaction == null) {
       exceptionThrower.throwException(new IllegalStateException("Current thread is not associated with transaction."));
     } else {
@@ -35,7 +34,7 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
 
   @Override
   public Object getResource(Object key) {
-    TransactionImpl transaction = getTransaction();
+    GafferTransaction transaction = getTransaction();
     if (transaction == null) {
       exceptionThrower.throwException(new IllegalStateException("Current thread is not associated with transaction."));
       return null;
@@ -45,12 +44,12 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
 
   @Override
   public void registerInterposedSynchronization(Synchronization sync) {
-    TransactionImpl transaction = getTransaction();
+    GafferTransaction transaction = getTransaction();
     if (transaction == null) {
       exceptionThrower.throwException(new IllegalStateException("Current thread is not associated with transaction."));
     } else {
       try {
-        transaction.registerSynchronization(sync);
+        transaction.registerInterposedSynchronization(sync);
       } catch (RollbackException e) {
         throw new RuntimeException(e);
       }
@@ -59,12 +58,12 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
 
   @Override
   public int getTransactionStatus() {
-    return getTransactionManager().getStatus();
+    return transactionManager.getStatus();
   }
 
   @Override
   public void setRollbackOnly() {
-    TransactionImpl transaction = getTransaction();
+    GafferTransaction transaction = getTransaction();
     if (transaction == null) {
       exceptionThrower.throwException(new IllegalStateException("Current thread is not associated with transaction."));
     } else {
@@ -74,7 +73,7 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
 
   @Override
   public boolean getRollbackOnly() {
-    TransactionImpl transaction = getTransaction();
+    GafferTransaction transaction = getTransaction();
     if (transaction == null) {
       exceptionThrower.throwException(new IllegalStateException("Current thread is not associated with transaction."));
       return false;
@@ -82,11 +81,8 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
     return transaction.getStatus() == Status.STATUS_MARKED_ROLLBACK;
   }
 
-  private TransactionImpl getTransaction() {
-    return getTransactionManager().getTransactionImpl();
+  private GafferTransaction getTransaction() {
+    return transactionManager.getTransactionImpl();
   }
 
-  private TransactionManagerImpl getTransactionManager() {
-    return transactionManager;
-  }
 }

@@ -6,54 +6,49 @@ import jakarta.transaction.NotSupportedException;
 import jakarta.transaction.RollbackException;
 import jakarta.transaction.SystemException;
 import jakarta.transaction.UserTransaction;
+import java.io.Serial;
 import java.io.Serializable;
 
-public class UserTransactionImpl implements UserTransaction, Serializable {
+public class GafferUserTransaction implements UserTransaction, Serializable {
 
+  @Serial
   private static final long serialVersionUID = 1L;
 
-  private transient TransactionManagerImpl transactionManager;
+  private final transient GafferTransactionManager transactionManager;
 
-  public UserTransactionImpl(TransactionManagerImpl transactionManager) {
+  public GafferUserTransaction(GafferTransactionManager transactionManager) {
     this.transactionManager = transactionManager;
   }
 
   @Override
   public void begin() throws NotSupportedException, SystemException {
-    getTransactionManager().begin();
+    transactionManager.begin();
   }
 
   @Override
   public void commit()
       throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException {
-    getTransactionManager().commit();
+    transactionManager.commit();
   }
 
   @Override
   public void rollback() throws IllegalStateException, SecurityException, SystemException {
-    getTransactionManager().rollback();
+    transactionManager.rollback();
   }
 
   @Override
   public void setRollbackOnly() throws IllegalStateException, SystemException {
-    getTransactionManager().setRollbackOnly();
+    transactionManager.setRollbackOnly();
   }
 
   @Override
-  public int getStatus() {
-    return getTransactionManager().getStatus();
+  public int getStatus() throws SystemException {
+    return transactionManager.getStatus();
   }
 
   @Override
   public void setTransactionTimeout(int seconds) throws SystemException {
-    getTransactionManager().setTransactionTimeout(seconds);
-  }
-
-  private TransactionManagerImpl getTransactionManager() {
-    if (transactionManager == null) {
-      transactionManager = ServiceRegistryHolder.getServiceRegistry().getTransactionManager();
-    }
-    return transactionManager;
+    transactionManager.setTransactionTimeout(seconds);
   }
 
 }

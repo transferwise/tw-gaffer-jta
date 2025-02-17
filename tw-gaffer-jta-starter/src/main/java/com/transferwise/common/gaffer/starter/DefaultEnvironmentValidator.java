@@ -1,5 +1,6 @@
 package com.transferwise.common.gaffer.starter;
 
+import com.transferwise.common.gaffer.GafferJtaProperties;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;

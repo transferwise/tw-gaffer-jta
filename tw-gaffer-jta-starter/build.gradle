@@ -12,14 +12,15 @@ dependencies {
     annotationProcessor libraries.springBootConfigurationProcessor
     compileOnly libraries.springBootConfigurationProcessor
 
-
     implementation libraries.jakartaValidationApi
     implementation libraries.hikariCp
+    implementation libraries.micrometerCore
     implementation libraries.springBootStarter
     implementation libraries.springBootStarterJdbc
     implementation libraries.twBaseUtils
 
     testImplementation libraries.springBootStarterTest
 
+    testRuntimeOnly libraries.springBootStarterActuator
     testRuntimeOnly libraries.springBootStarterValidation
 }
