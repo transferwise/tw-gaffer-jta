@@ -31,6 +31,7 @@ ext {
             springBootStarterValidation     : 'org.springframework.boot:spring-boot-starter-validation',
             springOrm                       : 'org.springframework:spring-orm',
             springTx                        : 'org.springframework:spring-tx',
-            tomcatJdbc                      : 'org.apache.tomcat:tomcat-jdbc'
+            tomcatJdbc                      : 'org.apache.tomcat:tomcat-jdbc',
+            junitPlatformLauncher           : 'org.junit.platform:junit-platform-launcher',
     ]
 }
